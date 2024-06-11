@@ -12,18 +12,18 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 
 
-
+-- Custome Data type for Facility Relation
 data Facility = Facility {
-    facility_id :: Maybe Int,
-    facility_name :: String,
-    facility_sport :: String,
-    price :: Int,
-    book_hour:: TimeOfDay,
-    facility_address :: String,
-    created_on :: UTCTime,
-    updated_on :: UTCTime,
-    group_id :: Maybe Int
-} deriving (Show,Generic,FromJSON,ToJSON,FromRow,ToRow)
+    facility_id         ::  Maybe Int,
+    facility_name       ::  String,
+    facility_sport      ::  String,
+    price               ::  Int,
+    book_time           ::  TimeOfDay,
+    facility_address    ::  String,
+    created_on          ::  UTCTime,
+    updated_on          ::  UTCTime,
+    group_id            ::  Maybe Int
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
 -- data Facility = Facility
 --   { facilityId      :: Maybe Int
