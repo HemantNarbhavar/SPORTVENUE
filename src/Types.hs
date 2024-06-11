@@ -1,6 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+
 
 module Types where
 
@@ -25,30 +29,14 @@ data Facility = Facility {
     group_id            ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
--- data Facility = Facility
---   { facilityId      :: Maybe Int
---   , facilityName    :: String
---   , facilitySport   :: String
---   , price           :: Int
---   , book_hour        :: TimeOfDay
---   , facilityAddress :: String
---   , createdOn       :: UTCTime
---   , updatedOn       :: UTCTime
---   , groupId         :: Maybe Int
---   } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
-
--- showFacility :: Facility
--- showFacility = Facility
---                     { facilityId = Just 1
---                     , facilityName = "Sample Facility"
---                     , facilitySport = "Football"
---                     , price = 100
---                     , book_hour = TimeOfDay 10 0 0 -- Example time: 10:00:00
---                     , facilityAddress = "123 Main Street"
---                     , createdOn = UTCTime (fromGregorian 2022 6 16) 0 -- Example UTC time: June 16, 2022
---                     , updatedOn = UTCTime (fromGregorian 2022 6 16) 0 -- Example UTC time: June 17, 2022
---                     , groupId = Just 123
---                     }
+-- Custome Data type for Groups Relation
+data Groups = Groups {
+    group_id    :: Maybe Int,
+    group_name  :: String,
+    created_on  :: UTCTime,
+    updated_on  :: UTCTime,
+    admin_id    :: Int
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
 
 -- showData :: Facility
