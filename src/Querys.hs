@@ -49,7 +49,8 @@ update_facility conn facilityId facility = do
 -- Delete the facility data by facility_id of 'facility' Relation.
 delete_facility :: Connection -> Int -> Servant.Handler ()
 delete_facility conn facilityId = do
-    _ <- liftIO $ execute conn "DELETE FROM facility WHERE facility_id = ?"
+    _ <- liftIO $ execute conn 
+        "DELETE FROM facility WHERE facility_id = ?"
         [facilityId]
     return ()
 
@@ -73,6 +74,38 @@ update_facility_group conn facilityId groupId = do
         "UPDATE facility SET group_id = ? WHERE facility_id = ?"
         (groupId, facilityId)
     return ()
+
+
+-- Remove Facility group field by facility_id (removing group_id from Facility Relation) 
+remove_facility_group :: Connection -> Int -> Servant.Handler ()
+remove_facility_group conn facilityId = do
+    _ <- liftIO $ execute conn
+        "UPDATE facility SET group_id = ? WHERE facility_id = ?"
+        (Nothing :: Maybe Int, facilityId)
+    return ()
+
+
+-- delete the Group data by group_id fron 'groups' Relation
+delete_group :: Connection -> Int -> Servant.Handler ()
+delete_group conn groupId = do
+    _ <- liftIO $ execute conn 
+        "DELETE FROM groups WHERE group_id = ?"
+        [groupId]
+    return ()
+
+-- Setting Holiday (Inserting) 'facility_status' Relation
+set_holiday :: Connection -> T.FacilityStatus -> Servant.Handler ()
+set_holiday conn facilityStatus = do
+    let T.FacilityStatus {  status      =   fstatus
+                        ,   start_date  =   startDate
+                        ,   end_date    =   endDate
+                        ,   facility_id =   facilityId
+                        } = facilityStatus
+    _ <- liftIO $ execute conn
+        "INSERT INTO facility_status (status, start_date, end_date, facility_id) VALUES (?, ?, ?, ?)"
+        (fstatus, startDate, endDate, facilityId)
+    return ()
+
 
 -- Get All facilitys data from 'facility' Relation.
 facilities :: Connection -> Servant.Handler [T.Facility]

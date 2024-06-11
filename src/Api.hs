@@ -55,6 +55,31 @@ type Update_Facility_Group =
         :> Capture "group_id" Int
         :> Put '[JSON] ()
 
+-- PUT http://localhost/admin/update_group/remove_facility/<facility_id>
+-- API for remove facility in group by facility_id
+type Remove_Facility_Group = 
+        "admin"
+        :> "update_group"
+        :> "remove_facility"
+        :> Capture "facility_id" Int
+        :> Put '[JSON] ()
+
+
+-- DELETE http://localhost/admin/delete_group/<group_id>
+-- API for delete group relation by group_id
+type Delete_Group = 
+        "admin"
+        :> "delete_group"
+        :> Capture "group_id" Int
+        :> Delete '[JSON] ()
+
+-- POST http://locahost/admin/set_holiday/facility
+-- API for set holiday by admin
+type Set_Holiday = 
+        "admin"
+        :> "set_holiday"
+        :>  ReqBody '[JSON] T.FacilityStatus
+        :>  Post '[JSON] ()
 
 -- API for Get facilities List
 -- GET http://locahost/facilities
@@ -69,6 +94,10 @@ type Api = Facilities
             :<|> Delete_Facility
             :<|> Create_Group
             :<|> Update_Facility_Group
+            :<|> Remove_Facility_Group
+            :<|> Delete_Group
+            :<|> Set_Holiday
+
 
 server :: Connection -> Server Api
 server conn = (Q.facilities conn) 
@@ -77,6 +106,9 @@ server conn = (Q.facilities conn)
                 :<|> (Q.delete_facility conn)
                 :<|> (Q.create_group conn)
                 :<|> (Q.update_facility_group conn)
+                :<|> (Q.remove_facility_group conn)
+                :<|> (Q.delete_group conn)
+                :<|> (Q.set_holiday conn)
 
 app :: Connection -> Application
 app conn = serve (Proxy :: Proxy Api) (server conn)

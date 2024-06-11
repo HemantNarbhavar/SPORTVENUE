@@ -8,6 +8,10 @@
 
 module Types where
 
+
+import Database.PostgreSQL.Simple.ToField (ToField(..))
+import Database.PostgreSQL.Simple.FromField (FromField(..))
+
 import Data.Time.Calendar (fromGregorian)
 import Data.Time (UTCTime(..))
 import Data.Time.LocalTime (TimeOfDay(..))
@@ -37,6 +41,21 @@ data Groups = Groups {
     updated_on  :: UTCTime,
     admin_id    :: Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+
+
+-- Define the custom data type for the ENUM status
+data FacilityStatusType = Maintenance | Holiday | BookedForSubscriber
+    deriving (Show, Eq, Generic, FromJSON, ToJSON, ToField, FromField)
+
+-- Custome Data type for Facility_status
+data FacilityStatus = FacilityStatus
+    { status_id     :: Maybe Int
+    , status        :: FacilityStatusType
+    , start_date    :: UTCTime
+    , end_date      :: UTCTime
+    , facility_id   :: Int
+    } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow, ToField, FromField)
 
 
 -- showData :: Facility
