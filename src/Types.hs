@@ -12,7 +12,6 @@ module Types where
 import Database.PostgreSQL.Simple.ToField 
 import Database.PostgreSQL.Simple.FromField 
 
-import Data.Time.Calendar (fromGregorian)
 import Data.Time (UTCTime(..))
 import Data.Time.LocalTime (TimeOfDay(..))
 import Database.PostgreSQL.Simple (FromRow, ToRow)
@@ -74,18 +73,6 @@ data FacilityStatus = FacilityStatus
     , status        :: FacilityStatusType
     , start_date    :: UTCTime
     , end_date      :: UTCTime
-    , facility_id   :: Int
-    } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow, ToField, FromField)
+    , facility_id   :: Maybe Int
+    } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
-
--- showData :: Facility
--- showData = Facility { facility_id = (Just 1), 
---                       facility_name = "hskjsk", 
---                       facility_sport = "kjhdjs", 
---                       price = 100,
---                       book_hour = "10:00:00",
---                       facility_address = "kdlslsj",
---                       created_on = "2023-06-11 15:30:00+05:30",
---                       updated_on = "2023-06-11 15:30:00+05:30",
---                       group_id = Nothing
--- }

@@ -106,10 +106,59 @@ set_holiday conn facilityStatus = do
         (fstatus, startDate, endDate, facilityId)
     return ()
 
+-- Setting Holiday (Inserting) according group by group_id 'facility_status' Relation
+set_holiday_group :: Connection -> Int -> T.FacilityStatus-> Servant.Handler ()
+set_holiday_group conn groupId facilityStatus = do
+    let T.FacilityStatus {  status      =   fstatus
+                        ,   start_date  =   startDate
+                        ,   end_date    =   endDate
+                        } = facilityStatus
+    _ <- liftIO $ execute conn
+        "INSERT INTO facility_status (status, start_date, end_date, facility_id) SELECT ?, ?, ?, facility_id FROM facility WHERE group_id = ?"
+        (fstatus, startDate, endDate, groupId)
+    return ()
 
--- Get All facilitys data from 'facility' Relation.
-facilities :: Connection -> Servant.Handler [T.Facility]
-facilities conn = do   
-    facilitys <- liftIO $ query_ conn "SELECT * FROM facility"
+
+-- delete the Group data by group_id fron 'groups' Relation
+delete_holiday :: Connection -> Int -> Servant.Handler ()
+delete_holiday conn statusId = do
+    _ <- liftIO $ execute conn 
+        "DELETE FROM facility_status WHERE status_id = ?"
+        [statusId]
+    return ()
+
+
+
+-- Update Facilities by group_id (Updating facilities of same group of Facility Relation) 
+update_grouped_facilities :: Connection -> Int -> T.Facility -> Servant.Handler ()
+update_grouped_facilities conn groupId facility = do
+    let T.Facility { facility_name = fname
+                 , facility_sport = fsport
+                 , price = fprice
+                 , book_time = fbook_time
+                 , facility_address = faddress
+                 , created_on = fcreated_on
+                 , updated_on = fupdated_on
+                 , group_id = fgroup_id
+                 } = facility
+    _ <- liftIO $ execute conn 
+        "UPDATE facility SET facility_name = ?, facility_sport = ?, price = ?, book_time = ?, facility_address = ?, created_on = ?, updated_on = ?, group_id = ? WHERE group_id = ?"
+        (fname, fsport, fprice, fbook_time, faddress, fcreated_on, fupdated_on, fgroup_id, groupId)
+    return ()
+
+
+-- Get All facilities data from 'facility' Relation.
+get_facilities :: Connection -> Servant.Handler [T.Facility]
+get_facilities conn = do   
+    facilitys <- liftIO $ query_ conn 
+                "SELECT * FROM facility"
     return facilitys
+
+-- Get facility data from 'facility' Relation.
+get_facility :: Connection -> Int -> Servant.Handler T.Facility
+get_facility conn facilityId = do   
+    res <- liftIO $ query conn 
+           "SELECT * FROM facility WHERE facility_id = ?"
+           [facilityId]
+    return $ head res
 
