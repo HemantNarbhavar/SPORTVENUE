@@ -76,7 +76,8 @@ library
                       syb,
                       aeson,
                       postgresql-simple,
-                      servant-server
+                      servant-server,
+                      text
 
     -- Directories containing source files.
     hs-source-dirs:   src

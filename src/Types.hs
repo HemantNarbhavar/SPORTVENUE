@@ -9,8 +9,8 @@
 module Types where
 
 
-import Database.PostgreSQL.Simple.ToField (ToField(..))
-import Database.PostgreSQL.Simple.FromField (FromField(..))
+import Database.PostgreSQL.Simple.ToField 
+import Database.PostgreSQL.Simple.FromField 
 
 import Data.Time.Calendar (fromGregorian)
 import Data.Time (UTCTime(..))
@@ -18,6 +18,8 @@ import Data.Time.LocalTime (TimeOfDay(..))
 import Database.PostgreSQL.Simple (FromRow, ToRow)
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
+import Data.Text
+import Data.Text.Encoding (decodeUtf8)
 
 
 -- Custome Data type for Facility Relation
@@ -46,7 +48,25 @@ data Groups = Groups {
 
 -- Define the custom data type for the ENUM status
 data FacilityStatusType = Maintenance | Holiday | BookedForSubscriber
-    deriving (Show, Eq, Generic, FromJSON, ToJSON, ToField, FromField)
+    deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+instance FromField FacilityStatusType where
+  fromField field mdata = do
+    typname <- typename field
+    case (typname, mdata) of
+      ("facility_status_type", Just bs) ->
+        case unpack (decodeUtf8 bs) of
+          "maintenance" -> return Maintenance
+          "holiday" -> return Holiday
+          "bookedforSubscriber" -> return BookedForSubscriber
+          _ -> returnError ConversionFailed field "Unexpected FacilityStatusType value"
+      _ -> returnError Incompatible field "Not a FacilityStatusType"
+
+instance ToField FacilityStatusType where
+  toField Maintenance = toField ("maintenance" :: Text)
+  toField Holiday = toField ("holiday" :: Text)
+  toField BookedForSubscriber = toField ("bookedforSubscriber" :: Text)
+
 
 -- Custome Data type for Facility_status
 data FacilityStatus = FacilityStatus
