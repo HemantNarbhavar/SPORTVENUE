@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
 
 
 module Querys where
@@ -10,6 +12,9 @@ import Servant
 import qualified Data.Text as Tx
 
 import qualified Types as T
+
+import Text.StringRandom
+
 
 
 -- Inserts the provided facility data into the 'facility' Relation.
@@ -164,7 +169,7 @@ get_facility conn facilityId = do
     return $ head res
 
 -- Book the Facility available by facility_id into the 'booking' Relation.
-book_facility :: Connection -> Int -> T.Bookings -> Servant.Handler String
+book_facility :: Connection -> Int -> T.Bookings -> Servant.Handler Tx.Text
 book_facility conn facilityId booking = do
     let T.Bookings { 
         book_time       =  btime,
@@ -174,8 +179,14 @@ book_facility conn facilityId booking = do
         updated_on      =  bupdated_on,
         user_id         =  buser_id
         } = booking
-    let token = "1234"
+    token <- liftIO generateToken
     _ <- liftIO $ execute conn 
         "INSERT INTO bookings (book_time, price, booking_status, booking_token, created_on, updated_on, user_id, facility_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         (btime, bprice, bstatus, token, bcreated_on, bupdated_on, buser_id, facilityId)
     return token
+    where
+        generateToken :: IO Tx.Text
+        generateToken = stringRandomIO "[a-zA-Z0-9]{8}"
+
+
+
