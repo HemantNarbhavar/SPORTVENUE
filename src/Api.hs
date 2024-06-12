@@ -97,7 +97,7 @@ type Delete_Holiday =
 
 -- PUT http://localhost/admin/group/<group_id>
 -- Facility attributes that needs to be mass updated
--- API for mss update facilities by group_id 'facility' Relation
+-- API for mass update facilities by group_id 'facility' Relation
 type Update_Grouped_Facilities =
     "admin"
     :> "group"
@@ -117,7 +117,16 @@ type Get_Facility =
     "facility"
     :> Capture "facility_id" Int
     :> Get '[JSON] T.Facility
-    
+
+
+-- POST http://locahost/user/book_facility/<facility_id>
+-- API for Booking facility by facility_id
+type Book_facility = 
+    "user"
+    :> "book_facility"
+    :> Capture "facility_id" Int
+    :> ReqBody '[JSON] T.Bookings
+    :> Post '[JSON] String
 
 
 type Api =
@@ -134,6 +143,7 @@ type Api =
     :<|> Delete_Holiday
     :<|> Update_Grouped_Facilities
     :<|> Get_Facility
+    :<|> Book_facility
 
 server :: Connection -> Server Api
 server conn =
@@ -150,6 +160,7 @@ server conn =
     :<|> (Q.delete_holiday conn)
     :<|> (Q.update_grouped_facilities conn)
     :<|> (Q.get_facility conn)
+    :<|> (Q.book_facility conn)
 
 app :: Connection -> Application
 app conn = serve (Proxy :: Proxy Api) (server conn)

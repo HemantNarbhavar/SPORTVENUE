@@ -45,9 +45,10 @@ data Groups = Groups {
 
 
 
--- Define the custom data type for the ENUM status
+-- Define the custom data type for the ENUM facility_ st
 data FacilityStatusType = Maintenance | Holiday | BookedForSubscriber
     deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
 
 instance FromField FacilityStatusType where
   fromField field mdata = do
@@ -76,3 +77,48 @@ data FacilityStatus = FacilityStatus
     , facility_id   :: Maybe Int
     } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
+
+-- Custome Data type for Users 
+data Users = Users {
+    user_id         ::  Maybe Int,
+    user_name       ::  String,
+    user_email      ::  String,
+    user_pass       ::  String,
+    phone_number    ::  String, 
+    user_address    ::  String,
+    created_on      ::  UTCTime,
+    updated_on      ::  UTCTime
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+-- Define the custom data type for the ENUM booking_st
+data BookingStatusType = Booked | Canclled
+    deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+instance FromField BookingStatusType where
+   fromField field mdata = do
+    typname <- typename field
+    case (typname, mdata) of
+      ("booking_status_type", Just bs) ->
+        case unpack (decodeUtf8 bs) of
+          "booked" -> return Booked
+          "canclled" -> return Canclled
+          _ -> returnError ConversionFailed field "Unexpected BookingStatusType value"
+      _ -> returnError Incompatible field "Not a BookingStatusType"
+
+instance ToField BookingStatusType where
+  toField Booked = toField ("booked" :: Text)
+  toField Canclled = toField ("canclled" :: Text)
+
+
+-- Custome Data type for Bookings
+data Bookings = Bookings {
+    booking_id      ::  Maybe Int,
+    book_time       ::  TimeOfDay,
+    price           ::  Int,
+    booking_status ::  BookingStatusType,
+    booking_token   ::  Maybe String,
+    created_on      ::  UTCTime,
+    updated_on      ::  UTCTime,
+    user_id         ::  Maybe Int,
+    facility_id     ::  Maybe Int
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)

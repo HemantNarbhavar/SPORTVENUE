@@ -7,6 +7,7 @@ module Querys where
 import Database.PostgreSQL.Simple
 import Control.Monad.IO.Class (liftIO)
 import Servant
+import qualified Data.Text as Tx
 
 import qualified Types as T
 
@@ -162,3 +163,19 @@ get_facility conn facilityId = do
            [facilityId]
     return $ head res
 
+-- Book the Facility available by facility_id into the 'booking' Relation.
+book_facility :: Connection -> Int -> T.Bookings -> Servant.Handler String
+book_facility conn facilityId booking = do
+    let T.Bookings { 
+        book_time       =  btime,
+        price           =  bprice,
+        booking_status =  bstatus,
+        created_on      =  bcreated_on,
+        updated_on      =  bupdated_on,
+        user_id         =  buser_id
+        } = booking
+    let token = "1234"
+    _ <- liftIO $ execute conn 
+        "INSERT INTO bookings (book_time, price, booking_status, booking_token, created_on, updated_on, user_id, facility_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (btime, bprice, bstatus, token, bcreated_on, bupdated_on, buser_id, facilityId)
+    return token
