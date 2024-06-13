@@ -77,7 +77,9 @@ library
                       aeson,
                       postgresql-simple,
                       servant-server,
-                      text
+                      text,
+                      random,
+                      string-random
 
     -- Directories containing source files.
     hs-source-dirs:   src

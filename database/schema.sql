@@ -1,5 +1,5 @@
 -- Booking Status type for booking relation
-CREATE TYPE booking_st AS ENUM ('booked', 'canclled');
+CREATE TYPE booking_st AS ENUM ('booked', 'canclled', 'activate');
 
 -- Facility Status type for facility_status relation
 CREATE TYPE facility_st AS ENUM ('maintenance', 'holiday', 'bookedforSubscriber');
@@ -57,6 +57,7 @@ CREATE TABLE facility (
 CREATE TABLE bookings (
     booking_id      SERIAL PRIMARY KEY,
     book_time       TIME NOT NULL,
+    min_duration_hour INT NOT NULL,
     price           INT NOT NULL,
     booking_status  booking_st NOT NULL,
     booking_token   VARCHAR(200) NOT NULL,

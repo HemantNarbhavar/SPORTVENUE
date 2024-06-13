@@ -40,6 +40,16 @@
   (major1) == 0 && (major2) <  7 || \
   (major1) == 0 && (major2) == 7 && (minor) <= 0)
 #endif /* MIN_VERSION_postgresql_simple */
+/* package random-1.2.1.2 */
+#ifndef VERSION_random
+#define VERSION_random "1.2.1.2"
+#endif /* VERSION_random */
+#ifndef MIN_VERSION_random
+#define MIN_VERSION_random(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  2 || \
+  (major1) == 1 && (major2) == 2 && (minor) <= 1)
+#endif /* MIN_VERSION_random */
 /* package servant-server-0.20 */
 #ifndef VERSION_servant_server
 #define VERSION_servant_server "0.20"
@@ -50,6 +60,16 @@
   (major1) == 0 && (major2) <  20 || \
   (major1) == 0 && (major2) == 20 && (minor) <= 0)
 #endif /* MIN_VERSION_servant_server */
+/* package string-random-0.1.4.3 */
+#ifndef VERSION_string_random
+#define VERSION_string_random "0.1.4.3"
+#endif /* VERSION_string_random */
+#ifndef MIN_VERSION_string_random
+#define MIN_VERSION_string_random(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  1 || \
+  (major1) == 0 && (major2) == 1 && (minor) <= 4)
+#endif /* MIN_VERSION_string_random */
 /* package syb-0.7.2.4 */
 #ifndef VERSION_syb
 #define VERSION_syb "0.7.2.4"

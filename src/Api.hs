@@ -9,6 +9,9 @@ import qualified Querys as Q
 import Servant
 import qualified Types as T
 
+import qualified Data.Text as Tx
+
+
 -- API for add facility
 -- POST http://localhost/admin/add_facility
 type Add_Facility =
@@ -126,7 +129,7 @@ type Book_facility =
     :> "book_facility"
     :> Capture "facility_id" Int
     :> ReqBody '[JSON] T.Bookings
-    :> Post '[JSON] String
+    :> Post '[JSON] Tx.Text
 
 
 type Api =

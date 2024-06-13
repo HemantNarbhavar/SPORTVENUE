@@ -91,7 +91,7 @@ data Users = Users {
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
 -- Define the custom data type for the ENUM booking_st
-data BookingStatusType = Booked | Canclled
+data BookingStatusType = Booked | Canclled | Activate
     deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 instance FromField BookingStatusType where
@@ -102,18 +102,21 @@ instance FromField BookingStatusType where
         case unpack (decodeUtf8 bs) of
           "booked" -> return Booked
           "canclled" -> return Canclled
+          "activate" -> return Activate
           _ -> returnError ConversionFailed field "Unexpected BookingStatusType value"
       _ -> returnError Incompatible field "Not a BookingStatusType"
 
 instance ToField BookingStatusType where
   toField Booked = toField ("booked" :: Text)
   toField Canclled = toField ("canclled" :: Text)
-
+  toField Activate = toField ("activate" :: Text)
+  
 
 -- Custome Data type for Bookings
 data Bookings = Bookings {
     booking_id      ::  Maybe Int,
     book_time       ::  TimeOfDay,
+    min_duration_hour    :: Int, 
     price           ::  Int,
     booking_status ::  BookingStatusType,
     booking_token   ::  Maybe String,
