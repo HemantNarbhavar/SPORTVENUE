@@ -203,10 +203,30 @@ book_facility conn facilityId booking = do
             return $ fromOnly $ head res
 
 
+-- Cancle the Booking by booking_id from the 'booking' Relation. (Updating it's Status to Canclled)
+cancle_booking :: Connection -> Int -> Servant.Handler ()
+cancle_booking conn bookingId = do
+    _ <- liftIO $ execute conn 
+        "UPDATE bookings SET booking_status = ? WHERE booking_id = ?" 
+        ("canclled" :: String , bookingId)
+    return  ()
 
--- get_facility :: Connection -> Int -> Servant.Handler T.Facility
--- get_facility conn facilityId = do
---     res <- liftIO $ query conn
---            "SELECT * FROM facility WHERE facility_id = ?"
---            [facilityId]
---     return $ head res
+
+-- Get All bookings data from 'bookings' Relation.
+get_bookings :: Connection -> Servant.Handler [T.Bookings]
+get_bookings conn = do
+    bookings <- liftIO $ query_ conn
+                "SELECT * FROM bookings"
+    return bookings
+
+
+-- Get a booking data by booking_id from 'bookings' Relation.
+get_booking :: Connection -> Int -> Servant.Handler T.Bookings
+get_booking conn bookingId = do
+    booking <- liftIO $ query conn
+                "SELECT * FROM bookings WHERE booking_id = ?"
+                [bookingId]
+    return $ head booking
+
+ 
+ 

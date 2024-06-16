@@ -55,7 +55,7 @@ instance FromField FacilityStatusType where
   fromField field mdata = do
     typname <- typename field
     case (typname, mdata) of
-      ("facility_status_type", Just bs) ->
+      ("facility_st", Just bs) ->
         case unpack (decodeUtf8 bs) of
           "maintenance" -> return Maintenance
           "holiday" -> return Holiday
@@ -93,13 +93,13 @@ data Users = Users {
 
 -- Define the custom data type for the ENUM booking_st
 data BookingStatusType = Booked | Canclled | Activate
-    deriving (Show, Eq, Generic, FromJSON, ToJSON)
+    deriving (Show, Read, Enum, Eq, Generic, FromJSON, ToJSON, Bounded)
 
 instance FromField BookingStatusType where
    fromField field mdata = do
     typname <- typename field
     case (typname, mdata) of
-      ("booking_status_type", Just bs) ->
+      ("booking_st", Just bs) ->
         case unpack (decodeUtf8 bs) of
           "booked" -> return Booked
           "canclled" -> return Canclled
@@ -119,10 +119,11 @@ data Bookings = Bookings {
     book_time       ::  TimeOfDay,
     min_duration_hour    :: Int, 
     price           ::  Maybe Int,
-    booking_status ::  BookingStatusType,
+    booking_status ::  Maybe BookingStatusType,
     booking_token   ::  Maybe String,
-    created_on      ::  UTCTime,
-    updated_on      ::  UTCTime,
+    created_on      ::  Maybe UTCTime,
+    updated_on      ::  Maybe UTCTime,
     user_id         ::  Maybe Int,
     facility_id     ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+

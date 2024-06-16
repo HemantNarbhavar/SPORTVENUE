@@ -134,6 +134,30 @@ type Book_facility =
     :> Post '[JSON] Tx.Text
 
 
+-- PUT http://locahost/user/cancel_booking/<booking_id>
+-- API for cancle booking by booking_id
+type Cancle_Booking = 
+    "user"
+    :> "cancle_booking"
+    :> Capture "booking_id" Int
+    :> Put '[JSON] ()
+
+-- GET http://locahost/user/bookings
+-- API for get all bookings from 'bookings' Relation
+type Get_Bookings = 
+   "user"
+   :> "bookings"
+   :> Get '[JSON] [T.Bookings]
+
+-- GET http://locahost/user/booking/<booking_id>
+-- API for get booking by booking_id from 'bookings' Relation
+type Get_Booking =
+   "user"
+   :> "booking"
+   :> Capture "booking_id" Int
+   :> Get '[JSON] T.Bookings
+
+
 type Api =
   Get_Facilities
     :<|> Add_Facility
@@ -149,6 +173,10 @@ type Api =
     :<|> Update_Grouped_Facilities
     :<|> Get_Facility
     :<|> Book_facility
+    :<|> Cancle_Booking
+    :<|> Get_Bookings
+    :<|> Get_Booking
+
 
 server :: Connection -> Server Api
 server conn =
@@ -166,6 +194,10 @@ server conn =
     :<|> (Q.update_grouped_facilities conn)
     :<|> (Q.get_facility conn)
     :<|> (Q.book_facility conn)
+    :<|> (Q.cancle_booking conn)
+    :<|> (Q.get_bookings conn)
+    :<|> (Q.get_booking conn)
+
 
 app :: Connection -> Application
 app conn = serve (Proxy :: Proxy Api) (server conn)
