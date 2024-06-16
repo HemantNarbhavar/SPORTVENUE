@@ -2,6 +2,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# HLINT ignore "Redundant return" #-}
 
 
 module Querys where
@@ -228,5 +229,38 @@ get_booking conn bookingId = do
                 [bookingId]
     return $ head booking
 
+
+-- Get a booking status data by booking_id from 'bookings' Relation.
+get_booking_status :: Connection -> Int -> Servant.Handler T.BookingStatusType
+get_booking_status conn bookingId = do
+    status <- liftIO $ query conn
+                "SELECT booking_status FROM bookings WHERE booking_id = ?"
+                (Only bookingId) :: Servant.Handler [Only T.BookingStatusType]
+    case status of
+        [] -> throwError err404 {errBody = "Booking not found"}
+        (Only st):_ -> return st
  
- 
+-- Activate Booking Status from 'bookings' Relation
+-- Verify and Validate Token given by user (Type -> BookingToken)
+activate_booking :: Connection -> T.BookingToken -> Servant.Handler Tx.Text
+activate_booking conn btoken = do
+    bookingIds <- verifyToken 
+    case bookingIds of
+        [] -> throwError err404 {errBody = "Invalid Token or BookingId"}
+        (Only bookingId):_ -> do
+                            _ <- liftIO $ execute conn
+                                "UPDATE bookings SET booking_status = ? WHERE booking_id =?"
+                                ("activate" :: String, bookingId)
+                            return "Activated"
+    where
+        -- Function that verifies given token with bookings relation token
+        verifyToken :: Servant.Handler [Only Int]
+        verifyToken = do
+            let T.BookingToken {
+                booking_id = btid,
+                token = bttoken
+            } = btoken
+            bid <- liftIO $ query conn
+                    "SELECT booking_id FROM bookings WHERE booking_id = ? AND booking_token = ?"
+                    (btid, bttoken) :: Servant.Handler [Only Int]
+            return bid

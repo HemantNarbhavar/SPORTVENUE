@@ -12,6 +12,7 @@ import Servant
 import qualified Types as T
 
 import qualified Data.Text as Tx
+import qualified Types as Tx
 
 
 -- API for add facility
@@ -157,6 +158,24 @@ type Get_Booking =
    :> Capture "booking_id" Int
    :> Get '[JSON] T.Bookings
 
+-- GET http://locahost/user/booking/<booking_id>/status
+-- API for get booking status by booking_id from 'bookings' Relation
+type Get_Booking_Status =
+   "user"
+   :> "booking"
+   :> Capture "booking_id" Int
+   :> "status"
+   :> Get '[JSON] T.BookingStatusType
+
+-- POST http://locahost/user/booking/activate
+-- API for activate booking using Token 
+type Activate_Booking = 
+   "user"
+   :> "booking"
+   :> "activate"
+   :> ReqBody '[JSON] Tx.BookingToken
+   :> Put '[JSON] Tx.Text
+
 
 type Api =
   Get_Facilities
@@ -176,6 +195,8 @@ type Api =
     :<|> Cancle_Booking
     :<|> Get_Bookings
     :<|> Get_Booking
+    :<|> Get_Booking_Status
+    :<|> Activate_Booking
 
 
 server :: Connection -> Server Api
@@ -197,6 +218,9 @@ server conn =
     :<|> (Q.cancle_booking conn)
     :<|> (Q.get_bookings conn)
     :<|> (Q.get_booking conn)
+    :<|> (Q.get_booking_status conn)
+    :<|> (Q.activate_booking conn)
+
 
 
 app :: Connection -> Application

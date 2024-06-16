@@ -127,3 +127,8 @@ data Bookings = Bookings {
     facility_id     ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
+-- Custome Data type for Booking Token for Verification
+data BookingToken = BookingToken {
+    booking_id    ::  Int,
+    token         ::  String
+} deriving (Show, Generic, FromJSON, ToJSON)
