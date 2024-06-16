@@ -17,9 +17,6 @@ bin-release/
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
 
-# Ignore build artifacts
-/dist-newstyle/
-
 # Add these lines to your .gitignore file
 
 # Ignore files in dist-newstyle/build

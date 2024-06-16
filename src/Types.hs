@@ -27,10 +27,11 @@ data Facility = Facility {
     facility_name       ::  String,
     facility_sport      ::  String,
     price               ::  Int,
-    book_time           ::  TimeOfDay,
+    open_time           ::  TimeOfDay,
+    close_time          ::  TimeOfDay,
     facility_address    ::  String,
     created_on          ::  UTCTime,
-    updated_on          ::  UTCTime,
+    updated_on          ::  Maybe UTCTime,
     group_id            ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
@@ -117,7 +118,7 @@ data Bookings = Bookings {
     booking_id      ::  Maybe Int,
     book_time       ::  TimeOfDay,
     min_duration_hour    :: Int, 
-    price           ::  Int,
+    price           ::  Maybe Int,
     booking_status ::  BookingStatusType,
     booking_token   ::  Maybe String,
     created_on      ::  UTCTime,
