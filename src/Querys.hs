@@ -264,3 +264,26 @@ activate_booking conn btoken = do
                     "SELECT booking_id FROM bookings WHERE booking_id = ? AND booking_token = ?"
                     (btid, bttoken) :: Servant.Handler [Only Int]
             return bid
+
+
+-- Inserts the provided rating data into the 'rating' Relation.
+add_rating :: Connection -> Int -> T.Ratings -> Servant.Handler ()
+add_rating conn facilityId rating = do
+    let T.Ratings { rating = rrating
+                , comment = rcomment
+                , created_on = rcreated_on
+                , updated_on = rupdated_on
+                , user_id   = ruser_id
+                } = rating
+    _ <- liftIO $ execute conn
+        "INSERT INTO ratings (rating, comment, created_on, updated_on, user_id, facility_id) VALUES (?, ?, ?, ?, ?, ?)"
+        (rrating, rcomment, rcreated_on, rupdated_on, ruser_id, facilityId)
+    return ()
+
+-- Get All Ratings data by facility_id from 'ratings' Relation
+get_ratings :: Connection -> Int -> Servant.Handler [T.Ratings]
+get_ratings conn facilityId = do
+    ratings <- liftIO $ query conn
+                "SELECT * FROM ratings WHERE facility_id = ?"
+                [facilityId]
+    return ratings

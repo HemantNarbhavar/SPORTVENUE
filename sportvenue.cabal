@@ -79,7 +79,9 @@ library
                       servant-server,
                       text,
                       random,
-                      string-random
+                      string-random,
+                      scientific
+
 
     -- Directories containing source files.
     hs-source-dirs:   src

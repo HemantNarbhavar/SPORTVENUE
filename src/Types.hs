@@ -19,6 +19,8 @@ import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 import Data.Text
 import Data.Text.Encoding (decodeUtf8)
+import Data.Scientific
+
 
 
 -- Custome Data type for Facility Relation
@@ -132,3 +134,13 @@ data BookingToken = BookingToken {
     booking_id    ::  Int,
     token         ::  String
 } deriving (Show, Generic, FromJSON, ToJSON)
+
+data Ratings = Ratings {
+  rating_id     :: Maybe Int,
+  rating        :: Scientific,
+  comment       :: String,
+  created_on    :: Maybe UTCTime,
+  updated_on    :: Maybe UTCTime,
+  user_id       :: Maybe Int,
+  facility_id   :: Maybe Int
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)

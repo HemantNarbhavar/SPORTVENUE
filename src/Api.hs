@@ -176,6 +176,34 @@ type Activate_Booking =
    :> ReqBody '[JSON] Tx.BookingToken
    :> Put '[JSON] Tx.Text
 
+-- Get http://localhost/search_facility
+-- API for search facilities by Query
+
+
+
+
+
+
+
+
+
+
+
+-- POST http://localhost/user/add_facility_rating/<facility_id>
+-- API for adding rating to facility in 'ratings' Relation
+type Add_Rating = 
+   "user"
+   :> "add_facility_rating"
+   :> Capture "facility_id" Int
+   :> ReqBody '[JSON] Tx.Ratings
+   :> Post '[JSON] ()
+
+-- GET http://localhost/facility_ratings/<facility_id>
+-- API for get ratings by facility_id from 'ratings' Relation
+type Get_Ratings = 
+   "facility_ratings"
+   :> Capture "facility_id" Int
+   :> Get '[JSON] [Tx.Ratings]
 
 type Api =
   Get_Facilities
@@ -197,6 +225,8 @@ type Api =
     :<|> Get_Booking
     :<|> Get_Booking_Status
     :<|> Activate_Booking
+    :<|> Add_Rating
+    :<|> Get_Ratings
 
 
 server :: Connection -> Server Api
@@ -220,6 +250,8 @@ server conn =
     :<|> (Q.get_booking conn)
     :<|> (Q.get_booking_status conn)
     :<|> (Q.activate_booking conn)
+    :<|> (Q.add_rating conn)
+    :<|> (Q.get_ratings conn)
 
 
 
