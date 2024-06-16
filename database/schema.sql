@@ -45,7 +45,8 @@ CREATE TABLE facility (
     facility_name   VARCHAR(200) NOT NULL,
     facility_sport  VARCHAR(50) NOT NULL,
     price           INT NOT NULL,
-    book_time       TIME NOT NULL,
+    open_time       TIME NOT NULL,
+    close_time      TIME NOT NULL,
     -- facility_image blob type later will use
     facility_address TEXT NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
@@ -63,8 +64,8 @@ CREATE TABLE bookings (
     booking_token   VARCHAR(200) NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ DEFAULT NOW(),
-    user_id         INT REFERENCES users(user_id),
-    facility_id     INT REFERENCES facility(facility_id)
+    user_id         INT REFERENCES users(user_id) NOT NULL,
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
 -- Wating List Relation
@@ -74,8 +75,8 @@ CREATE TABLE waitinglist (
     price           INT NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ DEFAULT NOW(),
-    user_id         INT REFERENCES users(user_id),
-    facility_id     INT REFERENCES facility(facility_id)
+    user_id         INT REFERENCES users(user_id) NOT NULL,
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
 -- Facility Status Relation for Holiday, Mantenance or Booked Day for Subscriber
@@ -84,7 +85,7 @@ CREATE TABLE facility_status (
     status          facility_st NOT NULL,
     start_date      TIMESTAMPTZ,
     end_date        TIMESTAMPTZ,
-    facility_id     INT REFERENCES facility(facility_id)
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
 -- Rating Relation for Facilitys
@@ -94,8 +95,8 @@ CREATE TABLE ratings (
     comment         TEXT,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ DEFAULT NOW(),
-    user_id         INT REFERENCES users(user_id),
-    facility_id     INT REFERENCES facility(facility_id)
+    user_id         INT REFERENCES users(user_id) NOT NULL,
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
 -- Subscriptions Relation for Recurring Days
@@ -107,8 +108,8 @@ CREATE TABLE subscriptions (
     price           INT NOT NULL,
     start_on        TIMESTAMPTZ DEFAULT NOW(),
     end_on          TIMESTAMPTZ,
-    user_id         INT REFERENCES users(user_id),
-    facility_id     INT REFERENCES facility(facility_id)
+    user_id         INT REFERENCES users(user_id) NOT NULL,
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
 -- Create a function for calculate end date
