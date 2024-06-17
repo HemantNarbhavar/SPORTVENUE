@@ -33,7 +33,6 @@ add_facility conn facility = do
                 } = facility
     _ <- liftIO $ execute conn
         "INSERT INTO facility (facility_name, facility_sport, price_per_slot, slot_duration, open_time, close_time, facility_address, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        -- (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcreated_on, fupdated_on, fgroup_id)
         (fname, fsport, fprice, fslot, fopen_time, fclose_time, faddress, fcity)
     return ()
 
@@ -50,7 +49,6 @@ update_facility conn facilityId facility = do
                  } = facility
     _ <- liftIO $ execute conn
         "UPDATE facility SET facility_name = ?, facility_sport = ?, price_per_slot = ?, open_time = ?, close_time = ?, facility_address = ?, city = ? WHERE facility_id = ?"
-        -- (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcreated_on, fupdated_on, fgroup_id, facilityId)
         (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcity, facilityId)
     return ()
 
@@ -67,17 +65,13 @@ delete_facility conn facilityId = do
 create_group :: Connection -> T.Groups -> Servant.Handler ()
 create_group conn group = do
     let T.Groups {  group_name = gname
-                -- ,   created_on  = gcreated_on
-                -- ,   updated_on  = gupdated_on
                 ,   admin_id    = gadmin_id
             } = group
     _ <- liftIO $ execute conn
         "INSERT INTO groups (group_name, admin_id) VALUES (?, ?)"
-        -- (gname, gcreated_on, gupdated_on, gadmin_id)
         (gname,gadmin_id)
     return ()
 
--- Update Facility group field by facility_id and group_id (adding group_id into Facility Relation) 
 update_facility_group :: Connection -> Int -> Int -> Servant.Handler ()
 update_facility_group conn facilityId groupId = do
     _ <- liftIO $ execute conn
@@ -148,8 +142,6 @@ update_grouped_facilities conn groupId facility = do
                  , open_time = fopen_time
                  , close_time = fclose_time
                  , facility_address = faddress
-                --  , created_on = fcreated_on
-                --  , updated_on = fupdated_on
                  , city = fcity
                  , group_id = fgroup_id
                  } = facility
@@ -178,12 +170,8 @@ get_facility conn facilityId = do
 book_facility :: Connection -> Int -> Int -> T.Bookings -> Servant.Handler Tx.Text
 book_facility conn facilityId slotId booking = do
     let T.Bookings {
-        -- book_time       =  btime,
-        -- min_duration_hour = bhour,
-        -- price           =  bbprice,
         booking_status =  bstatus,
         user_id         =  buser_id
-        -- slot_id         = bslot_id
         } = booking
     token <- liftIO generateToken
     bprice <- getPrice
@@ -271,8 +259,6 @@ add_rating :: Connection -> Int -> T.Ratings -> Servant.Handler ()
 add_rating conn facilityId rating = do
     let T.Ratings { rating = rrating
                 , comment = rcomment
-                -- , created_on = rcreated_on
-                -- , updated_on = rupdated_on
                 , user_id   = ruser_id
                 } = rating
     _ <- liftIO $ execute conn
