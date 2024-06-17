@@ -131,6 +131,7 @@ type Book_facility =
     "user"
     :> "book_facility"
     :> Capture "facility_id" Int
+    :> Capture "slot_id" Int
     :> ReqBody '[JSON] T.Bookings
     :> Post '[JSON] Tx.Text
 

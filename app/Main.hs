@@ -11,7 +11,7 @@ import qualified Api
 main :: IO ()
 main = do
   putStrLn "Hello, Haskell!"
-  conn <- connectPostgreSQL "host=localhost dbname=fac user=adming10x password=1234"
+  conn <- connectPostgreSQL "host=localhost dbname=sport user=adming10x password=1234"
   putStrLn "Running at http://localhost:5000"
   run 5000 (Api.app conn)
   close conn

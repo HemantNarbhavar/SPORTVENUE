@@ -28,11 +28,13 @@ data Facility = Facility {
     facility_id         ::  Maybe Int,
     facility_name       ::  String,
     facility_sport      ::  String,
-    price               ::  Int,
+    price_per_slot      ::  Int,
+    slot_duration       ::  Int,
     open_time           ::  TimeOfDay,
     close_time          ::  TimeOfDay,
     facility_address    ::  String,
-    created_on          ::  UTCTime,
+    city                ::  String,
+    created_on          ::  Maybe UTCTime,
     updated_on          ::  Maybe UTCTime,
     group_id            ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
@@ -41,8 +43,8 @@ data Facility = Facility {
 data Groups = Groups {
     group_id    :: Maybe Int,
     group_name  :: String,
-    created_on  :: UTCTime,
-    updated_on  :: UTCTime,
+    created_on  :: Maybe UTCTime,
+    updated_on  :: Maybe UTCTime,
     admin_id    :: Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
@@ -118,15 +120,13 @@ instance ToField BookingStatusType where
 -- Custome Data type for Bookings
 data Bookings = Bookings {
     booking_id      ::  Maybe Int,
-    book_time       ::  TimeOfDay,
-    min_duration_hour    :: Int, 
     price           ::  Maybe Int,
-    booking_status ::  Maybe BookingStatusType,
+    booking_status  ::  BookingStatusType,
     booking_token   ::  Maybe String,
     created_on      ::  Maybe UTCTime,
     updated_on      ::  Maybe UTCTime,
     user_id         ::  Maybe Int,
-    facility_id     ::  Maybe Int
+    slot_id         ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
 -- Custome Data type for Booking Token for Verification
@@ -138,7 +138,7 @@ data BookingToken = BookingToken {
 data Ratings = Ratings {
   rating_id     :: Maybe Int,
   rating        :: Scientific,
-  comment       :: String,
+  comment       :: Maybe String,
   created_on    :: Maybe UTCTime,
   updated_on    :: Maybe UTCTime,
   user_id       :: Maybe Int,

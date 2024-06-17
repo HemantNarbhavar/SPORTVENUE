@@ -15,7 +15,7 @@ CREATE TABLE admins (
     admin_pass      VARCHAR(50)  NOT NULL,  -- later chkpass type will use
     phone_number    VARCHAR(20),
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW()
+    updated_on      TIMESTAMPTZ
 );
 
 -- User Relation
@@ -27,7 +27,7 @@ CREATE TABLE users (
     phone_number    VARCHAR(20),
     user_address    TEXT,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW()
+    updated_on      TIMESTAMPTZ
 );
 
 -- Group Relation to manage facilitys easier
@@ -35,8 +35,8 @@ CREATE TABLE groups (
     group_id        SERIAL PRIMARY KEY,
     group_name      VARCHAR(200) NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW(),
-    admin_id        INT REFERENCES admins(admin_id)
+    updated_on      TIMESTAMPTZ,
+    admin_id        INT REFERENCES admins(admin_id) NOT NULL
 );
 
 -- Facility Relation 
@@ -44,47 +44,94 @@ CREATE TABLE facility (
     facility_id     SERIAL PRIMARY KEY,
     facility_name   VARCHAR(200) NOT NULL,
     facility_sport  VARCHAR(50) NOT NULL,
-    price           INT NOT NULL,
+    price_per_slot  INT NOT NULL,
+    slot_duration   INT NOT NULL,
     open_time       TIME NOT NULL,
     close_time      TIME NOT NULL,
     -- facility_image blob type later will use
     facility_address TEXT NOT NULL,
+    city            VARCHAR(50) NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW(),
+    updated_on      TIMESTAMPTZ,
     group_id        INT REFERENCES groups(group_id)
 );
+
+-- Facility Slot Realtion
+CREATE TABLE facility_slots (
+    slot_id   SERIAL PRIMARY KEY,
+    slot_start_time TIME NOT NULL,
+    slot_end_time   TIME NOT NULL,
+    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+);
+
+-- Function for generating facility_slots
+CREATE OR REPLACE FUNCTION generate_facility_slots() RETURNS TRIGGER AS $$
+DECLARE
+    start_time TIME;
+    end_time TIME;
+    slot_duration INTERVAL;
+BEGIN
+    start_time := NEW.open_time;
+    slot_duration := (NEW.slot_duration || ' hour')::INTERVAL;
+
+    -- Loop to generate slots until the close time
+    LOOP
+        end_time := start_time + slot_duration;
+
+        -- Check if the end time exceeds the close time
+        IF end_time > NEW.close_time THEN
+            end_time := NEW.close_time;
+        END IF;
+
+        INSERT INTO facility_slots (facility_id, slot_start_time, slot_end_time)
+        VALUES (NEW.facility_id, start_time, end_time);
+
+        start_time := end_time;
+
+        -- Exit loop when start_time reaches or exceeds close_time
+        EXIT WHEN start_time >= NEW.close_time;
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Trigger is created for generate facility_slots for facility
+CREATE TRIGGER generate_slots_trigger
+AFTER INSERT ON facility
+FOR EACH ROW
+EXECUTE FUNCTION generate_facility_slots();
+
 
 -- Booking Relation to book facilitys by User for perticular time slot
 CREATE TABLE bookings (
     booking_id      SERIAL PRIMARY KEY,
-    book_time       TIME NOT NULL,
-    min_duration_hour INT NOT NULL,
     price           INT NOT NULL,
     booking_status  booking_st NOT NULL,
     booking_token   VARCHAR(200) NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW(),
+    updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    slot_id         INT REFERENCES facility_slots(slot_id) NOT NULL    
 );
 
 -- Wating List Relation
 CREATE TABLE waitinglist (
     watinglist_id   SERIAL PRIMARY KEY,
-    book_time       TIME NOT NULL,
     price           INT NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW(),
+    updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    slot_id         INT REFERENCES facility_slots(slot_id) NOT NULL    
 );
 
 -- Facility Status Relation for Holiday, Mantenance or Booked Day for Subscriber
 CREATE TABLE facility_status (
     status_id       SERIAL PRIMARY KEY,
     status          facility_st NOT NULL,
-    start_date      TIMESTAMPTZ,
-    end_date        TIMESTAMPTZ,
+    start_date      TIMESTAMPTZ NOT NULL,
+    end_date        TIMESTAMPTZ NOT NULL,
     facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
 
@@ -94,7 +141,7 @@ CREATE TABLE ratings (
     rating          NUMERIC(3,2) NOT NULL,
     comment         TEXT,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
-    updated_on      TIMESTAMPTZ DEFAULT NOW(),
+    updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
     facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
@@ -107,7 +154,7 @@ CREATE TABLE subscriptions (
     recurring_day   day_of_week NOT NULL,
     price           INT NOT NULL,
     start_on        TIMESTAMPTZ DEFAULT NOW(),
-    end_on          TIMESTAMPTZ,
+    end_on          TIMESTAMPTZ, -- automatically generated start_on + 28 days
     user_id         INT REFERENCES users(user_id) NOT NULL,
     facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
