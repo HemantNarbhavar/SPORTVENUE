@@ -1,4 +1,3 @@
-```markdown
 ## API Endpoints
 
 ### Add Facility
@@ -201,4 +200,3 @@
   - `GET http://localhost:5000/user/search_available_slots/{date}/{facility_id}`
 - Description:
   - API for searching available slots for a specific date and facility by date and facility_id.
-```
