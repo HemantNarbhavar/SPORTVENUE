@@ -1,6 +1,6 @@
-A system that powers a facility (auditorium/Turf/ground/etc) booking app/website.
+# A system that powers a facility (auditorium/Turf/ground/etc) booking app/website.
 
-Endpoints to:
+## Endpoints to:
 
 1. Create a facility (multiple type facility)
 2. While creating, user can determine minimum amount/blocks of time for which facility can be booked (e.g. 30mins/1hr)
@@ -28,8 +28,6 @@ Endpoints to:
 24. Export the facility data as CSV, xlsx, json (Meaningful grouping of data)
 25. Add tests wherever needed
 
-The project should be hosted on Gitlab.
-Endpoints need have authentication for now.
-Packages suggested: servant (API scaffolding), beam-core/beam-postgres (ORM), aeson, postgresql-simple, etc
+# The project should be hosted on Gitlab. Endpoints need have authentication for now. Packages suggested: servant (API scaffolding), beam-core/beam-postgres (ORM), aeson, postgresql-simple, etc
  
-Submission date - On or before 18 June '24
+## Submission date - On or before 18 June '24
