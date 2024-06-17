@@ -3,6 +3,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
 {-# HLINT ignore "Redundant return" #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
 
 
 module Querys where
@@ -13,8 +14,9 @@ import Servant
 import qualified Data.Text as Tx
 
 import qualified Types as T
-
+import Data.Time.Calendar.OrdinalDate (Day)
 import Text.StringRandom
+import Data.Coerce (Coercible)
 -- import qualified Api as T
 
 
@@ -170,14 +172,15 @@ get_facility conn facilityId = do
 book_facility :: Connection -> Int -> Int -> T.Bookings -> Servant.Handler Tx.Text
 book_facility conn facilityId slotId booking = do
     let T.Bookings {
-        booking_status =  bstatus,
+        booking_status  =  bstatus,
+        booking_date    =  bdate,
         user_id         =  buser_id
         } = booking
     token <- liftIO generateToken
     bprice <- getPrice
     _ <- liftIO $ execute conn
-        "INSERT INTO bookings (price, booking_status, booking_token, user_id, slot_id) VALUES (?, ?, ?, ?, ?)"
-        (bprice, bstatus, token, buser_id, slotId)
+        "INSERT INTO bookings (price, booking_status, booking_token, booking_date, user_id, slot_id) VALUES (?, ?, ?, ?, ?, ?)"
+        (bprice, bstatus, token, bdate, buser_id, slotId)
     return token
     where
         -- Function that generate Random String as Token
@@ -193,13 +196,33 @@ book_facility conn facilityId slotId booking = do
 
 
 -- Cancle the Booking by booking_id from the 'booking' Relation. (Updating it's Status to Canclled)
-cancle_booking :: Connection -> Int -> Servant.Handler ()
+cancle_booking :: Connection -> Int -> Servant.Handler Tx.Text
 cancle_booking conn bookingId = do
-    _ <- liftIO $ execute conn 
-        "UPDATE bookings SET booking_status = ? WHERE booking_id = ?" 
-        ("canclled" :: String , bookingId)
-    return  ()
-
+    res <- check_ten_minute
+    case res of
+        [] -> throwError err404 {errBody = "your are not able to cancle booking (10 mint)"}
+        (Only st):_ -> case st of
+                            "Successful" -> do
+                                            _ <- liftIO $ execute conn 
+                                                "UPDATE bookings SET booking_status = ? WHERE booking_id = ?" 
+                                                ("canclled" :: String , bookingId)
+                                            return $ Tx.pack st
+                            _ -> do
+                                 throwError err404 {errBody = "your are not able to cancle booking (10 mint)"} 
+    where
+    --     -- Function that checks booking will allow to cancle or not
+        check_ten_minute :: Servant.Handler [Only String]
+        check_ten_minute = do
+            ans <- liftIO $ query conn
+                    "SELECT CASE WHEN current_timestamp < created_on + INTERVAL '10 minute' THEN 'Successful' ELSE 'Unsccessful' END status FROM bookings WHERE booking_id = ?"   
+                    [bookingId]
+            return ans
+    --         ans <- liftIO $ query conn
+    --                 "SELECT ? FROM bookings"
+    --                 -- "SELECT CASE WHEN current_timestamp < created_on + INTERVAL '10 minute' THEN 'Successful' ELSE 'Unsccessful' END status FROM bookings WHERE booking_id = ?"
+    --                 [bookingId] :: Servant.Handler [Only String]
+    --         return $ ans
+                    
 
 -- Get All bookings data from 'bookings' Relation.
 get_bookings :: Connection -> Servant.Handler [T.Bookings]
@@ -274,3 +297,29 @@ get_ratings conn facilityId = do
                 "SELECT * FROM ratings WHERE facility_id = ?"
                 [facilityId]
     return ratings
+
+-- Get available slots by facility_id
+search_available_slots :: Connection -> Int -> Servant.Handler [T.FacilitySlots]
+search_available_slots conn facilityId = do
+    slots <- liftIO $ query conn
+              "SELECT * FROM facility_slots WHERE facility_id = ? AND slot_id NOT IN (SELECT b.slot_id FROM bookings AS b)"
+              [facilityId]
+    return slots
+
+-- Get available slots on perticular date by facility_id and day
+search_available_slots_day :: Connection -> Day -> Int -> Servant.Handler [T.FacilitySlots]
+search_available_slots_day conn day facilityId = do
+    slots <- liftIO $ query conn
+              "SELECT * FROM facility_slots WHERE facility_id = ? AND slot_id NOT IN (SELECT b.slot_id FROM bookings AS b WHERE b.booking_date = ?)"
+              (facilityId,day)
+    return slots
+
+
+-- Get top 5 facilitys by rating
+get_top_facility :: Connection -> Servant.Handler [T.Facility]
+get_top_facility conn = do
+    facilitys <- liftIO $ query_ conn
+                 "SELECT f.facility_id, f.facility_name, f.facility_sport, f.price_per_slot, f.slot_duration, f.open_time, f.close_time, f.facility_address, f.city, f.created_on, f.updated_on, f.group_id FROM facility AS f NATURAL JOIN (SELECT facility_id, AVG(rating) AS avg_rating FROM ratings GROUP BY facility_id) AS r ORDER BY avg_rating DESC LIMIT 5"
+    return facilitys
+
+

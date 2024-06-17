@@ -18,6 +18,21 @@ CREATE TABLE admins (
     updated_on      TIMESTAMPTZ
 );
 
+
+-- Create the trigger function and trigger for update_on 'admins' Relation
+CREATE OR REPLACE FUNCTION update_admins_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_admins_update
+BEFORE UPDATE ON admins
+FOR EACH ROW
+EXECUTE FUNCTION update_admins_timestamp();
+
+
 -- User Relation
 CREATE TABLE users (
     user_id         SERIAL PRIMARY KEY,
@@ -30,6 +45,21 @@ CREATE TABLE users (
     updated_on      TIMESTAMPTZ
 );
 
+
+-- Create the trigger function and trigger for update_on 'users' Relation
+CREATE OR REPLACE FUNCTION update_users_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_users_update
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION update_users_timestamp();
+
+
 -- Group Relation to manage facilitys easier
 CREATE TABLE groups (
     group_id        SERIAL PRIMARY KEY,
@@ -38,6 +68,21 @@ CREATE TABLE groups (
     updated_on      TIMESTAMPTZ,
     admin_id        INT REFERENCES admins(admin_id) NOT NULL
 );
+
+
+-- Create the trigger function and trigger for update_on 'gropus' Relation
+CREATE OR REPLACE FUNCTION update_groups_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_groups_update
+BEFORE UPDATE ON groups
+FOR EACH ROW
+EXECUTE FUNCTION update_groups_timestamp();
+
 
 -- Facility Relation 
 CREATE TABLE facility (
@@ -55,6 +100,20 @@ CREATE TABLE facility (
     updated_on      TIMESTAMPTZ,
     group_id        INT REFERENCES groups(group_id)
 );
+
+-- Create the trigger function and trigger for update_on 'facility' Relation
+CREATE OR REPLACE FUNCTION update_facility_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_facility_update
+BEFORE UPDATE ON facility
+FOR EACH ROW
+EXECUTE FUNCTION update_facility_timestamp();
+
 
 -- Facility Slot Realtion
 CREATE TABLE facility_slots (
@@ -110,11 +169,27 @@ CREATE TABLE bookings (
     price           INT NOT NULL,
     booking_status  booking_st NOT NULL,
     booking_token   VARCHAR(200) NOT NULL,
+    booking_date    DATE NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
     slot_id         INT REFERENCES facility_slots(slot_id) NOT NULL    
 );
+
+
+-- Create the trigger function and trigger for update_on 'bookings' Relation
+CREATE OR REPLACE FUNCTION update_bookings_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_bookings_update
+BEFORE UPDATE ON bookings
+FOR EACH ROW
+EXECUTE FUNCTION update_bookings_timestamp();
+
 
 -- Wating List Relation
 CREATE TABLE waitinglist (
@@ -125,6 +200,21 @@ CREATE TABLE waitinglist (
     user_id         INT REFERENCES users(user_id) NOT NULL,
     slot_id         INT REFERENCES facility_slots(slot_id) NOT NULL    
 );
+
+
+-- Create the trigger function and trigger for update_on 'waitinglist' Relation
+CREATE OR REPLACE FUNCTION update_waitinglist_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_waitinglist_update
+BEFORE UPDATE ON waitinglist
+FOR EACH ROW
+EXECUTE FUNCTION update_waitinglist_timestamp();
+
 
 -- Facility Status Relation for Holiday, Mantenance or Booked Day for Subscriber
 CREATE TABLE facility_status (
@@ -145,6 +235,21 @@ CREATE TABLE ratings (
     user_id         INT REFERENCES users(user_id) NOT NULL,
     facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
+
+
+-- Create the trigger function and trigger for update_on 'ratings' Relation
+CREATE OR REPLACE FUNCTION update_ratings_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_ratings_update
+BEFORE UPDATE ON ratings
+FOR EACH ROW
+EXECUTE FUNCTION update_ratings_timestamp();
+
 
 -- Subscriptions Relation for Recurring Days
 -- Assumption it's monthly subscription

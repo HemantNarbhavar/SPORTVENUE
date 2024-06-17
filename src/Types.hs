@@ -4,6 +4,7 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+-- {-# LANGUAGE StandaloneDeriving #-}
 
 
 module Types where
@@ -15,6 +16,8 @@ import Database.PostgreSQL.Simple.FromField
 import Data.Time (UTCTime(..))
 import Data.Time.LocalTime (TimeOfDay(..))
 import Database.PostgreSQL.Simple (FromRow, ToRow)
+-- import Database.PostgreSQL.Simple.Time (Date)
+import Data.Time.Calendar.OrdinalDate (Day)
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON, FromJSON)
 import Data.Text
@@ -123,6 +126,7 @@ data Bookings = Bookings {
     price           ::  Maybe Int,
     booking_status  ::  BookingStatusType,
     booking_token   ::  Maybe String,
+    booking_date    ::  Day,
     created_on      ::  Maybe UTCTime,
     updated_on      ::  Maybe UTCTime,
     user_id         ::  Maybe Int,
@@ -143,4 +147,13 @@ data Ratings = Ratings {
   updated_on    :: Maybe UTCTime,
   user_id       :: Maybe Int,
   facility_id   :: Maybe Int
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+
+-- Custome Data type for Slots of facility
+data FacilitySlots = FacilitySlots {
+  slot_id           :: Maybe Int,
+  slot_start_time   :: TimeOfDay,
+  slot_end_time     :: TimeOfDay,
+  facility_id       :: Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)

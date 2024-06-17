@@ -10,7 +10,7 @@ import Database.PostgreSQL.Simple
 import qualified Querys as Q
 import Servant
 import qualified Types as T
-
+import Data.Time.Calendar.OrdinalDate (Day)
 import qualified Data.Text as Tx
 import qualified Types as Tx
 
@@ -125,7 +125,7 @@ type Get_Facility =
     :> Get '[JSON] T.Facility
 
 
--- POST http://locahost/user/book_facility/<facility_id>
+-- POST http://locahost/user/book_facility/<facility_id>/<slot_id>
 -- API for Booking facility by facility_id
 type Book_facility = 
     "user"
@@ -142,7 +142,7 @@ type Cancle_Booking =
     "user"
     :> "cancle_booking"
     :> Capture "booking_id" Int
-    :> Put '[JSON] ()
+    :> Put '[JSON] Tx.Text
 
 -- GET http://locahost/user/bookings
 -- API for get all bookings from 'bookings' Relation
@@ -177,15 +177,6 @@ type Activate_Booking =
    :> ReqBody '[JSON] Tx.BookingToken
    :> Put '[JSON] Tx.Text
 
--- Get http://localhost/search_facility
--- API for search facilities by Query
-
-
-
-
-
-
-
 
 
 
@@ -205,6 +196,34 @@ type Get_Ratings =
    "facility_ratings"
    :> Capture "facility_id" Int
    :> Get '[JSON] [Tx.Ratings]
+
+-- GET http://localhost/facility_ratings/top_5
+-- API for get top 5 facility by rating
+type Get_Top_Facility = 
+    "facility_ratings"
+    :> "top_5"
+    :> Get '[JSON] [Tx.Facility]
+
+
+-- Get http://localhost/user/search_available_slots/<facility_id>
+-- API for search slots for given facility by facility_id
+type Search_Available_Slots =
+   "user"
+   :> "search_available_slots"
+   :> Capture "facility_id" Int
+   :> Get '[JSON] [Tx.FacilitySlots] 
+
+-- Get http://localhost/user/search_available_slots/<date>/<facility_id>
+-- API for search slots on perticular date by day and facility_id
+type Search_Available_Slots_Day = 
+   "user"
+   :> "search_available_slots"
+   :> Capture "date" Day
+   :> Capture "facility_id" Int
+   :> Get '[JSON] [Tx.FacilitySlots] 
+
+
+
 
 type Api =
   Get_Facilities
@@ -228,6 +247,9 @@ type Api =
     :<|> Activate_Booking
     :<|> Add_Rating
     :<|> Get_Ratings
+    :<|> Get_Top_Facility
+    :<|> Search_Available_Slots
+    :<|> Search_Available_Slots_Day
 
 
 server :: Connection -> Server Api
@@ -253,6 +275,9 @@ server conn =
     :<|> (Q.activate_booking conn)
     :<|> (Q.add_rating conn)
     :<|> (Q.get_ratings conn)
+    :<|> (Q.get_top_facility conn)
+    :<|> (Q.search_available_slots conn)
+    :<|> (Q.search_available_slots_day conn)
 
 
 
