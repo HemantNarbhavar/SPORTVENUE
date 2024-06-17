@@ -16,7 +16,7 @@ import qualified Types as Tx
 
 
 -- API for add facility
--- POST http://localhost/admin/add_facility
+-- POST http://localhost:5000/admin/add_facility
 type Add_Facility =
   "admin"
     :> "add_facility"
@@ -24,7 +24,7 @@ type Add_Facility =
     :> Post '[JSON] ()
 
 -- API for update facility by facility_id
--- PUT http://localhost/admin/update_facility/<facility_id>
+-- PUT http://localhost:5000/admin/update_facility/<facility_id>
 type Update_Facility =
   "admin"
     :> "update_facility"
@@ -33,7 +33,7 @@ type Update_Facility =
     :> Put '[JSON] ()
 
 -- API for delete facility by facility_id
--- DELETE http://localhost/admin/delete_facility/<facility_id>
+-- DELETE http://localhost:5000/admin/delete_facility/<facility_id>
 type Delete_Facility =
   "admin"
     :> "delete_facility"
@@ -41,14 +41,14 @@ type Delete_Facility =
     :> Delete '[JSON] ()
 
 -- API for Create group
--- POST http://localhost/admin/create_group
+-- POST http://localhost:5000/admin/create_group
 type Create_Group =
   "admin"
     :> "create_group"
     :> ReqBody '[JSON] T.Groups
     :> Post '[JSON] ()
 
--- PUT http://localhost/admin/update_group/add_facility/<facility_id>/<group_id>
+-- PUT http://localhost:5000/admin/update_group/add_facility/<facility_id>/<group_id>
 -- API for add facility in group by facility_id and group_id
 type Update_Facility_Group =
   "admin"
@@ -58,7 +58,7 @@ type Update_Facility_Group =
     :> Capture "group_id" Int
     :> Put '[JSON] ()
 
--- PUT http://localhost/admin/update_group/remove_facility/<facility_id>
+-- PUT http://localhost:5000/admin/update_group/remove_facility/<facility_id>
 -- API for remove facility in group by facility_id
 type Remove_Facility_Group =
   "admin"
@@ -67,7 +67,7 @@ type Remove_Facility_Group =
     :> Capture "facility_id" Int
     :> Put '[JSON] ()
 
--- DELETE http://localhost/admin/delete_group/<group_id>
+-- DELETE http://localhost:5000/admin/delete_group/<group_id>
 -- API for delete group relation by group_id
 type Delete_Group =
   "admin"
@@ -75,7 +75,7 @@ type Delete_Group =
     :> Capture "group_id" Int
     :> Delete '[JSON] ()
 
--- POST http://locahost/admin/set_holiday/facility
+-- POST http://localhost:5000/admin/set_holiday/facility
 -- API for set holiday by admin
 type Set_Holiday =
   "admin"
@@ -83,7 +83,7 @@ type Set_Holiday =
     :> ReqBody '[JSON] T.FacilityStatus
     :> Post '[JSON] ()
 
--- POST http://locahost/admin/set_holiday/group/<group_id>
+-- POST http://localhost:5000/admin/set_holiday/group/<group_id>
 -- API for set holiday to facilites of belongs to same group by group_id
 type Set_Holiday_Group =
   "admin"
@@ -93,7 +93,7 @@ type Set_Holiday_Group =
     :> ReqBody '[JSON] T.FacilityStatus
     :> Post '[JSON] ()
 
--- DELETE http://locahost/admin/remove_holiday/<holiday_id>
+-- DELETE http://localhost:5000/admin/remove_holiday/<holiday_id>
 -- API for delete holiday from by status_id 'facility_status' Relation
 type Delete_Holiday =
   "admin"
@@ -101,7 +101,7 @@ type Delete_Holiday =
     :> Capture "status_id" Int
     :> Delete '[JSON] ()
 
--- PUT http://localhost/admin/group/<group_id>
+-- PUT http://localhost:5000/admin/group/<group_id>
 -- Facility attributes that needs to be mass updated
 -- API for mass update facilities by group_id 'facility' Relation
 type Update_Grouped_Facilities =
@@ -111,13 +111,13 @@ type Update_Grouped_Facilities =
     :> ReqBody '[JSON] T.Facility
     :> Put '[JSON] ()
 
--- GET http://locahost/facilities
+-- GET http://localhost:5000/facilities
 -- API for Get facilities List 
 type Get_Facilities =
     "facilities"
     :> Get '[JSON] [T.Facility]
 
--- GET http://locahost/facility/<facility_id>
+-- GET http://localhost:5000/facility/<facility_id>
 -- API for Get facility by facility_id
 type Get_Facility =
     "facility"
@@ -125,7 +125,7 @@ type Get_Facility =
     :> Get '[JSON] T.Facility
 
 
--- POST http://locahost/user/book_facility/<facility_id>/<slot_id>
+-- POST http://localhost:5000/user/book_facility/<facility_id>/<slot_id>
 -- API for Booking facility by facility_id
 type Book_facility = 
     "user"
@@ -136,7 +136,7 @@ type Book_facility =
     :> Post '[JSON] Tx.Text
 
 
--- PUT http://locahost/user/cancel_booking/<booking_id>
+-- PUT http://localhost:5000/user/cancel_booking/<booking_id>
 -- API for cancle booking by booking_id
 type Cancle_Booking = 
     "user"
@@ -144,14 +144,14 @@ type Cancle_Booking =
     :> Capture "booking_id" Int
     :> Put '[JSON] Tx.Text
 
--- GET http://locahost/user/bookings
+-- GET http://localhost:5000/user/bookings
 -- API for get all bookings from 'bookings' Relation
 type Get_Bookings = 
    "user"
    :> "bookings"
    :> Get '[JSON] [T.Bookings]
 
--- GET http://locahost/user/booking/<booking_id>
+-- GET http://localhost:5000/user/booking/<booking_id>
 -- API for get booking by booking_id from 'bookings' Relation
 type Get_Booking =
    "user"
@@ -159,7 +159,7 @@ type Get_Booking =
    :> Capture "booking_id" Int
    :> Get '[JSON] T.Bookings
 
--- GET http://locahost/user/booking/<booking_id>/status
+-- GET http://localhost:5000/user/booking/<booking_id>/status
 -- API for get booking status by booking_id from 'bookings' Relation
 type Get_Booking_Status =
    "user"
@@ -168,7 +168,7 @@ type Get_Booking_Status =
    :> "status"
    :> Get '[JSON] T.BookingStatusType
 
--- POST http://locahost/user/booking/activate
+-- POST http://localhost:5000/user/booking/activate
 -- API for activate booking using Token 
 type Activate_Booking = 
    "user"
@@ -181,7 +181,7 @@ type Activate_Booking =
 
 
 
--- POST http://localhost/user/add_facility_rating/<facility_id>
+-- POST http://localhost:5000/user/add_facility_rating/<facility_id>
 -- API for adding rating to facility in 'ratings' Relation
 type Add_Rating = 
    "user"
@@ -190,14 +190,14 @@ type Add_Rating =
    :> ReqBody '[JSON] Tx.Ratings
    :> Post '[JSON] ()
 
--- GET http://localhost/facility_ratings/<facility_id>
+-- GET http://localhost:5000/facility_ratings/<facility_id>
 -- API for get ratings by facility_id from 'ratings' Relation
 type Get_Ratings = 
    "facility_ratings"
    :> Capture "facility_id" Int
    :> Get '[JSON] [Tx.Ratings]
 
--- GET http://localhost/facility_ratings/top_5
+-- GET http://localhost:5000/facility_ratings/top_5
 -- API for get top 5 facility by rating
 type Get_Top_Facility = 
     "facility_ratings"
@@ -205,7 +205,7 @@ type Get_Top_Facility =
     :> Get '[JSON] [Tx.Facility]
 
 
--- Get http://localhost/user/search_available_slots/<facility_id>
+-- Get http://localhost:5000/user/search_available_slots/<facility_id>
 -- API for search slots for given facility by facility_id
 type Search_Available_Slots =
    "user"
@@ -213,7 +213,7 @@ type Search_Available_Slots =
    :> Capture "facility_id" Int
    :> Get '[JSON] [Tx.FacilitySlots] 
 
--- Get http://localhost/user/search_available_slots/<date>/<facility_id>
+-- Get http://localhost:5000/user/search_available_slots/<date>/<facility_id>
 -- API for search slots on perticular date by day and facility_id
 type Search_Available_Slots_Day = 
    "user"

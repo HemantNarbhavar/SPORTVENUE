@@ -62,7 +62,8 @@ library
     exposed-modules:  MyLib,
                       Types,
                       Api,
-                      Querys
+                      Querys,
+                      DBconnection
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -80,7 +81,8 @@ library
                       text,
                       random,
                       string-random,
-                      scientific
+                      scientific,
+                      bytestring
 
 
     -- Directories containing source files.

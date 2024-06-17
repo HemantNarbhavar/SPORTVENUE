@@ -1,3 +1,4 @@
+```markdown
 # A system that powers a facility (auditorium/Turf/ground/etc) booking app/website.
 
 ## Endpoints to:
@@ -31,3 +32,4 @@
 # The project should be hosted on Gitlab. Endpoints need have authentication for now. Packages suggested: servant (API scaffolding), beam-core/beam-postgres (ORM), aeson, postgresql-simple, etc
  
 ## Submission date - On or before 18 June '24
+```

@@ -16,8 +16,6 @@ import qualified Data.Text as Tx
 import qualified Types as T
 import Data.Time.Calendar.OrdinalDate (Day)
 import Text.StringRandom
-import Data.Coerce (Coercible)
--- import qualified Api as T
 
 
 
@@ -74,6 +72,7 @@ create_group conn group = do
         (gname,gadmin_id)
     return ()
 
+-- Update Facility group field by facility_id (updating group_id to Facility Relation) 
 update_facility_group :: Connection -> Int -> Int -> Servant.Handler ()
 update_facility_group conn facilityId groupId = do
     _ <- liftIO $ execute conn
@@ -217,12 +216,7 @@ cancle_booking conn bookingId = do
                     "SELECT CASE WHEN current_timestamp < created_on + INTERVAL '10 minute' THEN 'Successful' ELSE 'Unsccessful' END status FROM bookings WHERE booking_id = ?"   
                     [bookingId]
             return ans
-    --         ans <- liftIO $ query conn
-    --                 "SELECT ? FROM bookings"
-    --                 -- "SELECT CASE WHEN current_timestamp < created_on + INTERVAL '10 minute' THEN 'Successful' ELSE 'Unsccessful' END status FROM bookings WHERE booking_id = ?"
-    --                 [bookingId] :: Servant.Handler [Only String]
-    --         return $ ans
-                    
+                               
 
 -- Get All bookings data from 'bookings' Relation.
 get_bookings :: Connection -> Servant.Handler [T.Bookings]

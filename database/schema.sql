@@ -260,9 +260,26 @@ CREATE TABLE subscriptions (
     price           INT NOT NULL,
     start_on        TIMESTAMPTZ DEFAULT NOW(),
     end_on          TIMESTAMPTZ, -- automatically generated start_on + 28 days
+    created_on      TIMESTAMPTZ DEFAULT NOW(),
+    updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
     facility_id     INT REFERENCES facility(facility_id) NOT NULL
 );
+
+
+-- Create the trigger function and trigger for update_on 'subscriptions' Relation
+CREATE OR REPLACE FUNCTION update_subscriptions_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_on = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_subscriptions_update
+BEFORE UPDATE ON subscriptions
+FOR EACH ROW
+EXECUTE FUNCTION update_subscriptions_timestamp();
+
 
 -- Create a function for calculate end date
 CREATE OR REPLACE FUNCTION calculate_end_date()
