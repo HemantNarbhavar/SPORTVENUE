@@ -12,7 +12,7 @@ CREATE TABLE admins (
     admin_id        SERIAL PRIMARY KEY,
     admin_name      VARCHAR(200) NOT NULL,
     admin_email     VARCHAR(200) NOT NULL UNIQUE,
-    admin_pass      VARCHAR(50)  NOT NULL,  -- later chkpass type will use
+    admin_pass      TEXT NOT NULL,  -- later chkpass type will use
     phone_number    VARCHAR(20),
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ
@@ -38,7 +38,7 @@ CREATE TABLE users (
     user_id         SERIAL PRIMARY KEY,
     user_name       VARCHAR(200) NOT NULL,
     user_email      VARCHAR(200) NOT NULL UNIQUE,
-    user_pass       VARCHAR(50) NOT NULL,  -- later chkpass type will use
+    user_pass       TEXT NOT NULL,  -- later chkpass type will use
     phone_number    VARCHAR(20),
     user_address    TEXT,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
