@@ -1,4 +1,9 @@
-module Main (main) where
+module Main where
+
+import MyTest
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented."
+main = do
+    putStrLn "Test suite not yet  implemented."
+    putStrLn  "Test Cases are running"
+    get_facility_test 1
