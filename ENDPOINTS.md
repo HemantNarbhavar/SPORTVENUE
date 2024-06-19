@@ -301,3 +301,62 @@
 - Description:
   - API for retrieving the top 5 facilities based on ratings.
 
+## Register and Login API's (authentication)
+
+### Register User
+- Endpoint:
+  - `POST http://localhost:5000/register/user`
+- Request : 
+  - {
+        "user_name": Text,
+        "user_email": Text,
+        "user_pass": Text,
+        "phone_number": Text,
+        "user_address": Text 
+    }
+- Response : 
+  - JSON UserId
+- Description:
+  - API for User Registration.
+
+### Register Admin
+- Endpoint:
+  - `POST http://localhost:5000/register/admin`
+- Request : 
+  - {
+        "admin_name": Text,
+        "admin_email": Text,
+        "admin_pass": Text,
+        "phone_number": Text
+    }
+- Response : 
+  - JSON AdminId
+- Description:
+  - API for Admin Registration.
+
+### Login Admin
+- Endpoint:
+  - `POST http://localhost:5000/login/admin`
+- Request : 
+  - {
+        "email": Text,
+        "password": Text
+    }
+- Response : 
+  - JSON Result
+- Description:
+  - API for Admin Login.
+
+### Login User
+- Endpoint:
+  - `POST http://localhost:5000/login/user`
+- Request : 
+  - {
+        "email": Text,
+        "password": Text
+    }
+- Response : 
+  - JSON Result
+- Description:
+  - API for User Login.
+
