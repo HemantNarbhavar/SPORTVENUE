@@ -15,7 +15,7 @@ type UserRegister =
     "register"
     :> "user"
     :> ReqBody '[JSON] T.Users
-    :> Post '[JSON] Int
+    :> Post '[JSON] T.UserId
 
 
 -- API for Admin Registration
@@ -24,7 +24,7 @@ type AdminRegister =
     "register"
     :> "admin"
     :> ReqBody '[JSON] T.Admins
-    :> Post '[JSON] Int
+    :> Post '[JSON] T.AdminId
 
 -- API for User Login
 -- POST http://localhost:5000/login/user
@@ -32,7 +32,7 @@ type UserLogin =
     "login"
     :> "user"
     :> ReqBody '[JSON] T.Login
-    :> Post '[JSON] Tx.Text
+    :> Post '[JSON] T.Result
 
 
 -- API for Admin Login
@@ -41,7 +41,7 @@ type AdminLogin =
     "login"
     :> "admin"
     :> ReqBody '[JSON] T.Login
-    :> Post '[JSON] Tx.Text
+    :> Post '[JSON] T.Result
 
 
 type AuthAPI = UserRegister :<|> UserLogin

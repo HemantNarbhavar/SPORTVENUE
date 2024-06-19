@@ -24,6 +24,9 @@ import Data.Text
 import Data.Text.Encoding (decodeUtf8)
 import Data.Scientific
 
+import qualified Data.Text as Tx
+
+
 -- Custome Data type for Admins Relation
 data Admins = Admins {
     admin_id      ::    Maybe Int,
@@ -239,3 +242,15 @@ data Login = Login {
   password    ::    String
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
+
+-- Custome newtype data for result of API's
+newtype Result = Result {result :: Tx.Text}
+    deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+-- Custome newtype data for user id for API's
+newtype UserId = UserId {userId :: Int}
+    deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+-- Custome newtype data for admin id for API's
+newtype AdminId = AdminId {adminId :: Int}
+    deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)

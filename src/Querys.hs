@@ -23,7 +23,7 @@ import Data.String (fromString)
 
 
 -- Inserts the provided facility data into the 'facility' Relation.
-add_facility :: Connection -> T.Facility -> Servant.Handler Tx.Text
+add_facility :: Connection -> T.Facility -> Servant.Handler T.Result
 add_facility conn facility = do
     let T.Facility { 
                   facility_name = fname
@@ -39,10 +39,10 @@ add_facility conn facility = do
     _ <- liftIO $ execute conn
         "INSERT INTO facility (facility_name, facility_sport, price_per_slot, slot_duration, open_time, close_time, facility_address, city, admin_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         (fname, fsport, fprice, fslot, fopen_time, fclose_time, faddress, fcity, fadmin)
-    return "Facility Added Successfuly"
+    return $ T.Result "Facility Added Successfuly"
 
 -- Update the facility data by facility_id and provided facility data to 'facility' Relation.
-update_facility :: Connection -> Int -> T.Facility -> Servant.Handler Tx.Text
+update_facility :: Connection -> Int -> T.Facility -> Servant.Handler T.Result
 update_facility conn facilityId facility = do
     let T.Facility {    
                    facility_name = fname
@@ -59,12 +59,12 @@ update_facility conn facilityId facility = do
             _ <- liftIO $ execute conn
                 "UPDATE facility SET facility_name = ?, facility_sport = ?, price_per_slot = ?, open_time = ?, close_time = ?, facility_address = ?, city = ? WHERE facility_id = ?"
                 (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcity, facilityId)
-            return "Facility Updated Successfuly"
+            return $ T.Result "Facility Updated Successfuly"
         else throwError err404 {errBody = "Invalid facility_id"}
 
 
 -- Delete the facility data by facility_id of 'facility' Relation.
-delete_facility :: Connection -> Int -> Servant.Handler Tx.Text
+delete_facility :: Connection -> Int -> Servant.Handler T.Result
 delete_facility conn facilityId = do
     result <- verifyID conn "facility" "facility_id" facilityId
     if result
@@ -72,12 +72,12 @@ delete_facility conn facilityId = do
             _ <- liftIO $ execute conn
                 "DELETE FROM facility WHERE facility_id = ?"
                 [facilityId]
-            return "Facility Deleted Successfuly"
+            return $ T.Result "Facility Deleted Successfuly"
         else throwError err404 {errBody = "Invalid facility_id"}
 
 
 -- Inserts the provided group data into the 'gropus' Relation. (by admin)
-create_group :: Connection -> T.Groups -> Servant.Handler Tx.Text
+create_group :: Connection -> T.Groups -> Servant.Handler T.Result
 create_group conn group = do
     let T.Groups {  group_name = gname
                 ,   admin_id    = gadmin_id
@@ -85,10 +85,10 @@ create_group conn group = do
     _ <- liftIO $ execute conn
         "INSERT INTO groups (group_name, admin_id) VALUES (?, ?)"
         (gname,gadmin_id)
-    return "Facility Group Added Successfuly"
+    return $ T.Result "Facility Group Added Successfuly"
 
 -- Update Facility group field by facility_id (updating group_id to Facility Relation) 
-update_facility_group :: Connection -> Int -> Int -> Servant.Handler Tx.Text
+update_facility_group :: Connection -> Int -> Int -> Servant.Handler T.Result
 update_facility_group conn facilityId groupId = do
     resultF <- verifyID conn "facility" "facility_id" facilityId
     resultG <- verifyID conn "groups" "group_id" groupId
@@ -97,12 +97,12 @@ update_facility_group conn facilityId groupId = do
             _ <- liftIO $ execute conn
                 "UPDATE facility SET group_id = ? WHERE facility_id = ?"
                 (groupId, facilityId)
-            return "Facility Added to group (group_id Updated) Successfuly"
+            return $ T.Result "Facility Added to group (group_id Updated) Successfuly"
         else throwError err404 {errBody = "Invalid facility_id or group_id"}
         
 
 -- Remove Facility group field by facility_id (removing group_id from Facility Relation) 
-remove_facility_group :: Connection -> Int -> Servant.Handler Tx.Text
+remove_facility_group :: Connection -> Int -> Servant.Handler T.Result
 remove_facility_group conn facilityId = do
     result <- verifyID conn "facility" "facility_id" facilityId
     if result
@@ -110,12 +110,12 @@ remove_facility_group conn facilityId = do
             _ <- liftIO $ execute conn
                 "UPDATE facility SET group_id = ? WHERE facility_id = ?"
                 (Nothing :: Maybe Int, facilityId)
-            return "Facility removed from group Successfuly"
+            return $ T.Result "Facility removed from group Successfuly"
         else throwError err404 {errBody = "Invalid facility_id"}
 
 
 -- delete the Group data by group_id fron 'groups' Relation
-delete_group :: Connection -> Int -> Servant.Handler Tx.Text
+delete_group :: Connection -> Int -> Servant.Handler T.Result
 delete_group conn groupId = do
     result <- verifyID conn "groups" "group_id" groupId
     if result
@@ -123,11 +123,11 @@ delete_group conn groupId = do
             _ <- liftIO $ execute conn
                 "DELETE FROM groups WHERE group_id = ?"
                 [groupId]
-            return "Facility Group deleted Successfuly"
+            return $ T.Result "Facility Group deleted Successfuly"
         else throwError err404 {errBody = "Invalid group_id"}
 
 -- Setting Holiday (Inserting) 'facility_status' Relation
-set_holiday :: Connection -> T.FacilityStatus -> Servant.Handler Tx.Text
+set_holiday :: Connection -> T.FacilityStatus -> Servant.Handler T.Result
 set_holiday conn facilityStatus = do
     let T.FacilityStatus {  status      =   fstatus
                         ,   start_date  =   startDate
@@ -137,10 +137,10 @@ set_holiday conn facilityStatus = do
     _ <- liftIO $ execute conn
         "INSERT INTO facility_status (status, start_date, end_date, facility_id) VALUES (?, ?, ?, ?)"
         (fstatus, startDate, endDate, facilityId)
-    return "FacilityStatus (Holiday/Maintenance/BookedForSubscriber) Added in Facility Status Successfuly"
+    return $ T.Result "FacilityStatus (Holiday/Maintenance/BookedForSubscriber) Added in Facility Status Successfuly"
 
 -- Setting Holiday (Inserting) according group by group_id 'facility_status' Relation
-set_holiday_group :: Connection -> Int -> T.FacilityStatus-> Servant.Handler Tx.Text
+set_holiday_group :: Connection -> Int -> T.FacilityStatus-> Servant.Handler T.Result
 set_holiday_group conn groupId facilityStatus = do
     let T.FacilityStatus {  status      =   fstatus
                         ,   start_date  =   startDate
@@ -152,12 +152,12 @@ set_holiday_group conn groupId facilityStatus = do
             _ <- liftIO $ execute conn
                 "INSERT INTO facility_status (status, start_date, end_date, facility_id) SELECT ?, ?, ?, facility_id FROM facility WHERE group_id = ?"
                 (fstatus, startDate, endDate, groupId)
-            return "FacilityStatus Updated Successfuly"
+            return $ T.Result "FacilityStatus Updated Successfuly"
         else throwError err404 {errBody = "Invalid group_id"}
 
 
 -- delete the Group data by group_id fron 'groups' Relation
-delete_holiday :: Connection -> Int -> Servant.Handler Tx.Text
+delete_holiday :: Connection -> Int -> Servant.Handler T.Result
 delete_holiday conn statusId = do
     result <- verifyID conn "facility_status" "status_id" statusId
     if result
@@ -165,12 +165,12 @@ delete_holiday conn statusId = do
             _ <- liftIO $ execute conn
                 "DELETE FROM facility_status WHERE status_id = ?"
                 [statusId]
-            return "FacilityStatus Deleted Successfuly"
+            return $ T.Result "FacilityStatus Deleted Successfuly"
         else throwError err404 {errBody = "Invalid status_id"}
         
 
 -- Update Facilities by group_id (Updating facilities of same group of Facility Relation) 
-update_grouped_facilities :: Connection -> Int -> T.Facility -> Servant.Handler Tx.Text
+update_grouped_facilities :: Connection -> Int -> T.Facility -> Servant.Handler T.Result
 update_grouped_facilities conn groupId facility = do
     let T.Facility { 
                    facility_name = fname
@@ -188,7 +188,7 @@ update_grouped_facilities conn groupId facility = do
             _ <- liftIO $ execute conn
                 "UPDATE facility SET facility_name = ?, facility_sport = ?, price = ?, open_time = ?, close_time = ?, facility_address = ?, city = ?, group_id = ? WHERE group_id = ?"
                 (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcity, fgroup_id, groupId)
-            return "Facilities Updated by group Successfully"
+            return $ T.Result "Facilities Updated by group Successfully"
         else throwError err404 {errBody = "Invalid group_id"}
 
 
@@ -213,7 +213,7 @@ get_facility conn facilityId = do
 
 
 -- Book the Facility available by facility_id into the 'booking' Relation.
-book_facility :: Connection -> Int -> Int -> T.Bookings -> Servant.Handler Tx.Text
+book_facility :: Connection -> Int -> Int -> T.Bookings -> Servant.Handler T.Result
 book_facility conn facilityId slotId booking = do
     let T.Bookings {
         booking_status  =  bstatus,
@@ -230,7 +230,7 @@ book_facility conn facilityId slotId booking = do
             _ <- liftIO $ execute conn
                 "INSERT INTO bookings (price, booking_status, booking_token, booking_date, user_id, slot_id) VALUES (?, ?, ?, ?, ?, ?)"
                 (bprice, bstatus, token, bdate, buser_id, slotId)
-            return token
+            return $ T.Result token
         else throwError err404 {errBody = "Invalid facility_id, slot_id or user_id"}
         
     where
@@ -247,7 +247,7 @@ book_facility conn facilityId slotId booking = do
 
 
 -- Cancle the Booking by booking_id from the 'booking' Relation. (Updating it's Status to Canclled)
-cancle_booking :: Connection -> Int -> Servant.Handler Tx.Text
+cancle_booking :: Connection -> Int -> Servant.Handler T.Result
 cancle_booking conn bookingId = do
     result <- verifyID conn "bookings" "booking_id" bookingId
     if result
@@ -258,7 +258,7 @@ cancle_booking conn bookingId = do
                     _ <- liftIO $ execute conn 
                         "UPDATE bookings SET booking_status = ? WHERE booking_id = ?" 
                         ("canclled" :: String , bookingId)
-                    return "Booking Canclled Successfuly"
+                    return $ T.Result "Booking Canclled Successfuly"
                 else throwError err404 {errBody = "Invalid booking_id"} 
         else throwError err404 {errBody = "Invalid booking_id"} 
     where
@@ -313,7 +313,7 @@ get_booking_status conn bookingId = do
 
 -- Activate Booking Status from 'bookings' Relation
 -- Verify and Validate Token given by user (Type -> BookingToken)
-activate_booking :: Connection -> T.BookingToken -> Servant.Handler Tx.Text
+activate_booking :: Connection -> T.BookingToken -> Servant.Handler T.Result
 activate_booking conn btoken = do
     let T.BookingToken {
         booking_id = btid,
@@ -329,7 +329,7 @@ activate_booking conn btoken = do
                                     _ <- liftIO $ execute conn
                                         "UPDATE bookings SET booking_status = ? WHERE booking_id =?"
                                         ("activate" :: String, bookingId)
-                                    return "Booking Status Activated Successfuly"
+                                    return $ T.Result "Booking Status Activated Successfuly"
         else throwError err404 {errBody = "Invalid booking_id"}
     where
         -- Function that verifies given token with bookings relation token
@@ -342,7 +342,7 @@ activate_booking conn btoken = do
 
 
 -- Inserts the provided rating data into the 'rating' Relation.
-add_rating :: Connection -> Int -> T.Ratings -> Servant.Handler Tx.Text
+add_rating :: Connection -> Int -> T.Ratings -> Servant.Handler T.Result
 add_rating conn facilityId rating = do
     let T.Ratings { rating = rrating
                 , comment = rcomment
@@ -356,7 +356,7 @@ add_rating conn facilityId rating = do
                 "INSERT INTO ratings (rating, comment, user_id, facility_id) VALUES (?, ?, ?, ?)"
                 -- (rrating, rcomment, rcreated_on, rupdated_on, ruser_id, facilityId)
                 (rrating, rcomment, ruser_id, facilityId)
-            return "Rating Added Successfuly"
+            return $ T.Result "Rating Added Successfuly"
         else throwError err404 {errBody = "Invalid facility_id or user_id"}
 
 -- Get All Ratings data by facility_id from 'ratings' Relation
