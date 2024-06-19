@@ -119,7 +119,7 @@ data Bookings = Bookings {
     booking_date    ::  Day,
     created_on      ::  Maybe UTCTime,
     updated_on      ::  Maybe UTCTime,
-    user_id         ::  Maybe Int,
+    user_id         ::  Int,
     slot_id         ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
@@ -183,7 +183,7 @@ data Ratings = Ratings {
     comment       :: Maybe String,
     created_on    :: Maybe UTCTime,
     updated_on    :: Maybe UTCTime,
-    user_id       :: Maybe Int,
+    user_id       :: Int,
     facility_id   :: Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 

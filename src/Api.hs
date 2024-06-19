@@ -109,7 +109,7 @@ type Update_Grouped_Facilities =
     :> "group"
     :> Capture "group_id" Int
     :> ReqBody '[JSON] T.Facility
-    :> Put '[JSON] ()
+    :> Put '[JSON] Tx.Text
 
 -- GET http://localhost:5000/facilities
 -- API for Get facilities List 
@@ -185,7 +185,7 @@ type Add_Rating =
    :> "add_facility_rating"
    :> Capture "facility_id" Int
    :> ReqBody '[JSON] Tx.Ratings
-   :> Post '[JSON] ()
+   :> Post '[JSON] Tx.Text
 
 -- GET http://localhost:5000/facility_ratings/<facility_id>
 -- API for get ratings by facility_id from 'ratings' Relation
