@@ -3,16 +3,18 @@
 {-# LANGUAGE TypeOperators #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Api where
 
-import Database.PostgreSQL.Simple
-import qualified Querys as Q
-import Servant
 import qualified Types as T
+import qualified Querys as Q
+import Auth.Api
+import Auth.Query
+import Database.PostgreSQL.Simple
+import Servant
 import Data.Time.Calendar.OrdinalDate (Day)
 import qualified Data.Text as Tx
-import qualified Types as Tx
 
 
 -- API for add facility
@@ -174,7 +176,7 @@ type Activate_Booking =
    "user"
    :> "booking"
    :> "activate"
-   :> ReqBody '[JSON] Tx.BookingToken
+   :> ReqBody '[JSON] T.BookingToken
    :> Put '[JSON] Tx.Text
 
 
@@ -184,7 +186,7 @@ type Add_Rating =
    "user"
    :> "add_facility_rating"
    :> Capture "facility_id" Int
-   :> ReqBody '[JSON] Tx.Ratings
+   :> ReqBody '[JSON] T.Ratings
    :> Post '[JSON] Tx.Text
 
 -- GET http://localhost:5000/facility_ratings/<facility_id>
@@ -192,14 +194,14 @@ type Add_Rating =
 type Get_Ratings = 
    "facility_ratings"
    :> Capture "facility_id" Int
-   :> Get '[JSON] [Tx.Ratings]
+   :> Get '[JSON] [T.Ratings]
 
 -- GET http://localhost:5000/facility_ratings/top_5
 -- API for get top 5 facility by rating
 type Get_Top_Facility = 
     "facility_ratings"
     :> "top_5"
-    :> Get '[JSON] [Tx.Facility]
+    :> Get '[JSON] [T.Facility]
 
 
 -- Get http://localhost:5000/user/search_available_slots/<facility_id>
@@ -208,7 +210,7 @@ type Search_Available_Slots =
    "user"
    :> "search_available_slots"
    :> Capture "facility_id" Int
-   :> Get '[JSON] [Tx.FacilitySlots] 
+   :> Get '[JSON] [T.FacilitySlots] 
 
 -- Get http://localhost:5000/user/search_available_slots/<date>/<facility_id>
 -- API for search slots on perticular date by day and facility_id
@@ -217,7 +219,7 @@ type Search_Available_Slots_Day =
    :> "search_available_slots"
    :> Capture "date" Day
    :> Capture "facility_id" Int
-   :> Get '[JSON] [Tx.FacilitySlots] 
+   :> Get '[JSON] [T.FacilitySlots] 
 
 
 
@@ -247,6 +249,9 @@ type Api =
     :<|> Get_Top_Facility
     :<|> Search_Available_Slots
     :<|> Search_Available_Slots_Day
+    -- :<|> UserRegister
+    -- :<|> UserLogin
+    :<|> AuthAPI
 
 
 server :: Connection -> Server Api
@@ -275,6 +280,10 @@ server conn =
     :<|> (Q.get_top_facility conn)
     :<|> (Q.search_available_slots conn)
     :<|> (Q.search_available_slots_day conn)
+    :<|> (register_user conn)
+    :<|> (login_user conn)
+    :<|> (register_admin conn)
+    :<|> (login_admin conn)
 
 
 
