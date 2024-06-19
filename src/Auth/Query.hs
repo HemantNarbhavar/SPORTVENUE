@@ -46,7 +46,7 @@ login_user conn userInfo = do
         [] -> throwError err404 {errBody = "Invalid User Email"}
         (Only pass):_ -> do
                         if (validateHashPassword pass $ B.pack upassword)
-                            then return $ T.Result "Login Successfuly"
+                            then return $ T.Result "User Login Successfuly"
                             else throwError err404 { errBody = "Incorrect password" }
                             
 
@@ -83,7 +83,7 @@ login_admin conn adminInfo = do
         [] -> throwError err404 {errBody = "Invalid Admin Email"}
         (Only pass):_ -> do
                         if (validateHashPassword pass $ B.pack upassword)
-                            then return $ T.Result "Login Successfuly"
+                            then return $ T.Result "Admin Login Successfuly"
                             else throwError err404 { errBody = "Incorrect password" }
 
 
