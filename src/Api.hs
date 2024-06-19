@@ -21,7 +21,7 @@ type Add_Facility =
   "admin"
     :> "add_facility"
     :> ReqBody '[JSON] T.Facility
-    :> Post '[JSON] ()
+    :> Post '[JSON] Tx.Text
 
 -- API for update facility by facility_id
 -- PUT http://localhost:5000/admin/update_facility/<facility_id>
@@ -30,7 +30,7 @@ type Update_Facility =
     :> "update_facility"
     :> Capture "facility_id" Int
     :> ReqBody '[JSON] T.Facility
-    :> Put '[JSON] ()
+    :> Put '[JSON] Tx.Text
 
 -- API for delete facility by facility_id
 -- DELETE http://localhost:5000/admin/delete_facility/<facility_id>
@@ -38,7 +38,7 @@ type Delete_Facility =
   "admin"
     :> "delete_facility"
     :> Capture "facility_id" Int
-    :> Delete '[JSON] ()
+    :> Delete '[JSON] Tx.Text
 
 -- API for Create group
 -- POST http://localhost:5000/admin/create_group
@@ -46,7 +46,7 @@ type Create_Group =
   "admin"
     :> "create_group"
     :> ReqBody '[JSON] T.Groups
-    :> Post '[JSON] ()
+    :> Post '[JSON] Tx.Text
 
 -- PUT http://localhost:5000/admin/update_group/add_facility/<facility_id>/<group_id>
 -- API for add facility in group by facility_id and group_id
@@ -56,7 +56,7 @@ type Update_Facility_Group =
     :> "add_facility"
     :> Capture "facility_id" Int
     :> Capture "group_id" Int
-    :> Put '[JSON] ()
+    :> Put '[JSON] Tx.Text
 
 -- PUT http://localhost:5000/admin/update_group/remove_facility/<facility_id>
 -- API for remove facility in group by facility_id
@@ -65,7 +65,7 @@ type Remove_Facility_Group =
     :> "update_group"
     :> "remove_facility"
     :> Capture "facility_id" Int
-    :> Put '[JSON] ()
+    :> Put '[JSON] Tx.Text
 
 -- DELETE http://localhost:5000/admin/delete_group/<group_id>
 -- API for delete group relation by group_id
@@ -73,7 +73,7 @@ type Delete_Group =
   "admin"
     :> "delete_group"
     :> Capture "group_id" Int
-    :> Delete '[JSON] ()
+    :> Delete '[JSON] Tx.Text
 
 -- POST http://localhost:5000/admin/set_holiday/facility
 -- API for set holiday by admin
@@ -81,7 +81,7 @@ type Set_Holiday =
   "admin"
     :> "set_holiday"
     :> ReqBody '[JSON] T.FacilityStatus
-    :> Post '[JSON] ()
+    :> Post '[JSON] Tx.Text
 
 -- POST http://localhost:5000/admin/set_holiday/group/<group_id>
 -- API for set holiday to facilites of belongs to same group by group_id
@@ -91,7 +91,7 @@ type Set_Holiday_Group =
     :> "group"
     :> Capture "group_id" Int
     :> ReqBody '[JSON] T.FacilityStatus
-    :> Post '[JSON] ()
+    :> Post '[JSON] Tx.Text
 
 -- DELETE http://localhost:5000/admin/remove_holiday/<holiday_id>
 -- API for delete holiday from by status_id 'facility_status' Relation
@@ -99,7 +99,7 @@ type Delete_Holiday =
   "admin"
     :> "remove_holiday"
     :> Capture "status_id" Int
-    :> Delete '[JSON] ()
+    :> Delete '[JSON] Tx.Text
 
 -- PUT http://localhost:5000/admin/group/<group_id>
 -- Facility attributes that needs to be mass updated
@@ -176,9 +176,6 @@ type Activate_Booking =
    :> "activate"
    :> ReqBody '[JSON] Tx.BookingToken
    :> Put '[JSON] Tx.Text
-
-
-
 
 
 -- POST http://localhost:5000/user/add_facility_rating/<facility_id>

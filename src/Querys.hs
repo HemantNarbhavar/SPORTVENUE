@@ -4,6 +4,7 @@
 {-# HLINT ignore "Use camelCase" #-}
 {-# HLINT ignore "Redundant return" #-}
 {-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# OPTIONS_GHC -Wno-unused-matches #-}
 
 
 module Querys where
@@ -16,11 +17,11 @@ import qualified Data.Text as Tx
 import qualified Types as T
 import Data.Time.Calendar.OrdinalDate (Day)
 import Text.StringRandom
-
+import Data.String (fromString)
 
 
 -- Inserts the provided facility data into the 'facility' Relation.
-add_facility :: Connection -> T.Facility -> Servant.Handler ()
+add_facility :: Connection -> T.Facility -> Servant.Handler Tx.Text
 add_facility conn facility = do
     let T.Facility { facility_name = fname
                 , facility_sport = fsport
@@ -30,14 +31,15 @@ add_facility conn facility = do
                 , close_time = fclose_time
                 , facility_address = faddress
                 , city = fcity
+                , admin_id = fadmin
                 } = facility
     _ <- liftIO $ execute conn
-        "INSERT INTO facility (facility_name, facility_sport, price_per_slot, slot_duration, open_time, close_time, facility_address, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        (fname, fsport, fprice, fslot, fopen_time, fclose_time, faddress, fcity)
-    return ()
+        "INSERT INTO facility (facility_name, facility_sport, price_per_slot, slot_duration, open_time, close_time, facility_address, city, admin_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        (fname, fsport, fprice, fslot, fopen_time, fclose_time, faddress, fcity, fadmin)
+    return "Facility Added Successfuly"
 
 -- Update the facility data by facility_id and provided facility data to 'facility' Relation.
-update_facility :: Connection -> Int -> T.Facility -> Servant.Handler ()
+update_facility :: Connection -> Int -> T.Facility -> Servant.Handler Tx.Text
 update_facility conn facilityId facility = do
     let T.Facility { facility_name = fname
                  , facility_sport = fsport
@@ -47,22 +49,31 @@ update_facility conn facilityId facility = do
                  , facility_address = faddress
                  , city = fcity
                  } = facility
-    _ <- liftIO $ execute conn
-        "UPDATE facility SET facility_name = ?, facility_sport = ?, price_per_slot = ?, open_time = ?, close_time = ?, facility_address = ?, city = ? WHERE facility_id = ?"
-        (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcity, facilityId)
-    return ()
+    result <- verifyFacilityID conn facilityId
+    if result
+        then do 
+            _ <- liftIO $ execute conn
+                "UPDATE facility SET facility_name = ?, facility_sport = ?, price_per_slot = ?, open_time = ?, close_time = ?, facility_address = ?, city = ? WHERE facility_id = ?"
+                (fname, fsport, fprice, fopen_time, fclose_time, faddress, fcity, facilityId)
+            return "Facility Updated Successfuly"
+        else throwError err404 {errBody = "Invalid facility_id"}
 
 
 -- Delete the facility data by facility_id of 'facility' Relation.
-delete_facility :: Connection -> Int -> Servant.Handler ()
+delete_facility :: Connection -> Int -> Servant.Handler Tx.Text
 delete_facility conn facilityId = do
-    _ <- liftIO $ execute conn
-        "DELETE FROM facility WHERE facility_id = ?"
-        [facilityId]
-    return ()
+    result <- verifyID conn "facility" "facility_id" facilityId
+    if result
+        then do
+            _ <- liftIO $ execute conn
+                "DELETE FROM facility WHERE facility_id = ?"
+                [facilityId]
+            return "Facility Deleted Successfuly"
+        else throwError err404 {errBody = "Invalid facility_id"}
+
 
 -- Inserts the provided group data into the 'gropus' Relation. (by admin)
-create_group :: Connection -> T.Groups -> Servant.Handler ()
+create_group :: Connection -> T.Groups -> Servant.Handler Tx.Text
 create_group conn group = do
     let T.Groups {  group_name = gname
                 ,   admin_id    = gadmin_id
@@ -70,36 +81,49 @@ create_group conn group = do
     _ <- liftIO $ execute conn
         "INSERT INTO groups (group_name, admin_id) VALUES (?, ?)"
         (gname,gadmin_id)
-    return ()
+    return "Facility Group Added Successfuly"
 
 -- Update Facility group field by facility_id (updating group_id to Facility Relation) 
-update_facility_group :: Connection -> Int -> Int -> Servant.Handler ()
+update_facility_group :: Connection -> Int -> Int -> Servant.Handler Tx.Text
 update_facility_group conn facilityId groupId = do
-    _ <- liftIO $ execute conn
-        "UPDATE facility SET group_id = ? WHERE facility_id = ?"
-        (groupId, facilityId)
-    return ()
-
+    resultF <- verifyFacilityID conn facilityId
+    resultG <- verifyGroupID conn groupId
+    if resultF == resultG
+        then do
+            _ <- liftIO $ execute conn
+                "UPDATE facility SET group_id = ? WHERE facility_id = ?"
+                (groupId, facilityId)
+            return "Facility Added to group (group_id Updated) Successfuly"
+        else throwError err404 {errBody = "Invalid facility_id or group_id"}
+        
 
 -- Remove Facility group field by facility_id (removing group_id from Facility Relation) 
-remove_facility_group :: Connection -> Int -> Servant.Handler ()
+remove_facility_group :: Connection -> Int -> Servant.Handler Tx.Text
 remove_facility_group conn facilityId = do
-    _ <- liftIO $ execute conn
-        "UPDATE facility SET group_id = ? WHERE facility_id = ?"
-        (Nothing :: Maybe Int, facilityId)
-    return ()
+    result <- verifyFacilityID conn facilityId
+    if result
+        then do
+            _ <- liftIO $ execute conn
+                "UPDATE facility SET group_id = ? WHERE facility_id = ?"
+                (Nothing :: Maybe Int, facilityId)
+            return "Facility removed from group Successfuly"
+        else throwError err404 {errBody = "Invalid facility_id"}
 
 
 -- delete the Group data by group_id fron 'groups' Relation
-delete_group :: Connection -> Int -> Servant.Handler ()
+delete_group :: Connection -> Int -> Servant.Handler Tx.Text
 delete_group conn groupId = do
-    _ <- liftIO $ execute conn
-        "DELETE FROM groups WHERE group_id = ?"
-        [groupId]
-    return ()
+    result <- verifyGroupID conn groupId
+    if result
+        then do
+            _ <- liftIO $ execute conn
+                "DELETE FROM groups WHERE group_id = ?"
+                [groupId]
+            return "Facility Group deleted Successfuly"
+        else throwError err404 {errBody = "Invalid group_id"}
 
 -- Setting Holiday (Inserting) 'facility_status' Relation
-set_holiday :: Connection -> T.FacilityStatus -> Servant.Handler ()
+set_holiday :: Connection -> T.FacilityStatus -> Servant.Handler Tx.Text
 set_holiday conn facilityStatus = do
     let T.FacilityStatus {  status      =   fstatus
                         ,   start_date  =   startDate
@@ -109,30 +133,37 @@ set_holiday conn facilityStatus = do
     _ <- liftIO $ execute conn
         "INSERT INTO facility_status (status, start_date, end_date, facility_id) VALUES (?, ?, ?, ?)"
         (fstatus, startDate, endDate, facilityId)
-    return ()
+    return "FacilityStatus (Holiday/Maintenance/BookedForSubscriber) Added in Facility Status Successfuly"
 
 -- Setting Holiday (Inserting) according group by group_id 'facility_status' Relation
-set_holiday_group :: Connection -> Int -> T.FacilityStatus-> Servant.Handler ()
+set_holiday_group :: Connection -> Int -> T.FacilityStatus-> Servant.Handler Tx.Text
 set_holiday_group conn groupId facilityStatus = do
     let T.FacilityStatus {  status      =   fstatus
                         ,   start_date  =   startDate
                         ,   end_date    =   endDate
                         } = facilityStatus
-    _ <- liftIO $ execute conn
-        "INSERT INTO facility_status (status, start_date, end_date, facility_id) SELECT ?, ?, ?, facility_id FROM facility WHERE group_id = ?"
-        (fstatus, startDate, endDate, groupId)
-    return ()
+    result <- verifyGroupID conn groupId
+    if result
+        then do
+            _ <- liftIO $ execute conn
+                "INSERT INTO facility_status (status, start_date, end_date, facility_id) SELECT ?, ?, ?, facility_id FROM facility WHERE group_id = ?"
+                (fstatus, startDate, endDate, groupId)
+            return "FacilityStatus Updated Successfuly"
+        else throwError err404 {errBody = "Invalid group_id"}
 
 
 -- delete the Group data by group_id fron 'groups' Relation
-delete_holiday :: Connection -> Int -> Servant.Handler ()
+delete_holiday :: Connection -> Int -> Servant.Handler Tx.Text
 delete_holiday conn statusId = do
-    _ <- liftIO $ execute conn
-        "DELETE FROM facility_status WHERE status_id = ?"
-        [statusId]
-    return ()
-
-
+    result <- verifyFacilityStatusID conn statusId
+    if result
+        then do
+            _ <- liftIO $ execute conn
+                "DELETE FROM facility_status WHERE status_id = ?"
+                [statusId]
+            return "FacilityStatus Deleted Successfuly"
+        else throwError err404 {errBody = "Invalid status_id"}
+        
 
 -- Update Facilities by group_id (Updating facilities of same group of Facility Relation) 
 update_grouped_facilities :: Connection -> Int -> T.Facility -> Servant.Handler ()
@@ -162,10 +193,21 @@ get_facilities conn = do
 -- Get facility data from 'facility' Relation.
 get_facility :: Connection -> Int -> Servant.Handler T.Facility
 get_facility conn facilityId = do
-    res <- liftIO $ query conn
-           "SELECT * FROM facility WHERE facility_id = ?"
-           [facilityId]
-    return $ head res
+    result <- verifyFacility
+    case result of
+        [] -> throwError err404 {errBody = "Invalid facility_id"}
+        (Only r):_ -> do       
+                res <- liftIO $ query conn
+                    "SELECT * FROM facility WHERE facility_id = ?"
+                    [facilityId]
+                return $ head res
+    where
+        verifyFacility :: Handler [Only Int]
+        verifyFacility = do
+            res <- liftIO $ query conn
+                        "SELECT facility_id FROM facility WHERE facility_id = ?"
+                        [facilityId]
+            return res
 
 -- Book the Facility available by facility_id into the 'booking' Relation.
 book_facility :: Connection -> Int -> Int -> T.Bookings -> Servant.Handler Tx.Text
@@ -317,3 +359,45 @@ get_top_facility conn = do
     return facilitys
 
 
+
+
+--- Common Functions
+-- Function for verifying facility id
+verifyFacilityID :: Connection -> Int -> Handler Bool
+verifyFacilityID conn facilityId = do
+    res <- liftIO $ query conn
+                "SELECT facility_id FROM facility WHERE facility_id = ?"
+                (Only facilityId) :: Handler [Only Int]
+    case res of
+        [] -> return False
+        (Only r):_ -> return True
+
+-- Function for verifying group id
+verifyGroupID :: Connection -> Int -> Handler Bool
+verifyGroupID conn groupID = do
+    res <- liftIO $ query conn
+                "SELECT group_id FROM groups WHERE group_id = ?"
+                (Only groupID) :: Handler [Only Int]
+    case res of
+        [] -> return False
+        (Only r):_ -> return True
+
+-- Function for verifying status_id
+verifyFacilityStatusID :: Connection -> Int -> Handler Bool
+verifyFacilityStatusID conn statusId = do
+    res <- liftIO $ query conn
+                "SELECT status_id FROM facility_status WHERE status_id = ?"
+                (Only statusId) :: Handler [Only Int]
+    case res of
+        [] -> return False
+        (Only r):_ -> return True
+
+-- General Function for verifying all tables id 
+verifyID :: Connection -> String -> String -> Int -> Handler Bool
+verifyID conn table_name column_name column_id = do
+    let queryStr = fromString $ "SELECT  " ++ column_name ++ " FROM " ++ table_name ++ " WHERE " ++ column_name ++ " = ?"
+    res <- liftIO $ query conn queryStr (Only column_id) :: Handler [Only Int]
+                -- ("SELECT  " ++ column_name ++ " FROM " ++ table_name ++ " WHERE " ++ column_name ++ " = ?")
+    case res of
+        [] -> return False
+        (Only r):_ -> return True

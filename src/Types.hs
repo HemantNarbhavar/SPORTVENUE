@@ -73,7 +73,8 @@ data Facility = Facility {
     city                ::  String,
     created_on          ::  Maybe UTCTime,
     updated_on          ::  Maybe UTCTime,
-    group_id            ::  Maybe Int
+    group_id            ::  Maybe Int,
+    admin_id            ::  Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
 
 
