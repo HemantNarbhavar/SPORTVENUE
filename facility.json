@@ -1,0 +1,11 @@
+{
+    "facility_name": "Central Sports Complex",
+    "facility_sport": "Basketball",
+    "price_per_slot": 1000,
+    "slot_duration": 60,
+    "open_time": "09:00:00",
+    "close_time": "21:00:00",
+    "facility_address": "123 Sports Ave",
+    "city": "Sportstown",
+    "admin_id": 1
+}
