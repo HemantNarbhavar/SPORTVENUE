@@ -98,7 +98,9 @@ CREATE TABLE facility (
     city            VARCHAR(50) NOT NULL,
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ,
-    group_id        INT REFERENCES groups(group_id)
+    group_id        INT REFERENCES groups(group_id),
+    admin_id        INT NOT NULL,
+    FOREIGN KEY (admin_id) REFERENCES admins(admin_id) ON DELETE CASCADE
 );
 
 -- Create the trigger function and trigger for update_on 'facility' Relation
@@ -120,7 +122,8 @@ CREATE TABLE facility_slots (
     slot_id   SERIAL PRIMARY KEY,
     slot_start_time TIME NOT NULL,
     slot_end_time   TIME NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    facility_id     INT NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(facility_id) ON DELETE CASCADE
 );
 
 -- Function for generating facility_slots
@@ -222,7 +225,8 @@ CREATE TABLE facility_status (
     status          facility_st NOT NULL,
     start_date      TIMESTAMPTZ NOT NULL,
     end_date        TIMESTAMPTZ NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    facility_id     INT NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(facility_id) ON DELETE CASCADE
 );
 
 -- Rating Relation for Facilitys
@@ -233,7 +237,8 @@ CREATE TABLE ratings (
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ,
     user_id         INT REFERENCES users(user_id) NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    facility_id     INT NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(facility_id) ON DELETE CASCADE
 );
 
 
@@ -262,8 +267,9 @@ CREATE TABLE subscriptions (
     end_on          TIMESTAMPTZ, -- automatically generated start_on + 28 days
     created_on      TIMESTAMPTZ DEFAULT NOW(),
     updated_on      TIMESTAMPTZ,
-    user_id         INT REFERENCES users(user_id) NOT NULL,
-    facility_id     INT REFERENCES facility(facility_id) NOT NULL
+    user_id         INT REFERENCES users(user_id) NOT NULL,    
+    facility_id     INT NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(facility_id) ON DELETE CASCADE
 );
 
 
