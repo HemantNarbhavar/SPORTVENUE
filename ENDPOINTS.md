@@ -41,8 +41,10 @@
 ### Delete Facility
 - Endpoint:
   - `DELETE http://localhost:5000/admin/delete_facility/{facility_id}`
-- Request : None
-- Response : JSON ()
+- Request : 
+  - None
+- Response : 
+  - JSON ()
 - Description:
   - API for deleting a facility by facility_id.
 
@@ -54,31 +56,38 @@
         "group_name": Text,
         "admin_id": Int
     }
-- Response : JSON ()
+- Response : 
+  - JSON ()
 - Description:
   - API for creating a new group of facilities.
 
 ### Update Facility Group (Add Facility)
 - Endpoint:
   - `PUT http://localhost:5000/admin/update_group/add_facility/{facility_id}/{group_id}`
-- Request : None
-- Response : JSON ()
+- Request : 
+  - None
+- Response : 
+  - JSON ()
 - Description:
   - API for adding a facility to a group by facility_id and group_id.
 
 ### Remove Facility from Group
 - Endpoint:
   - `PUT http://localhost:5000/admin/update_group/remove_facility/{facility_id}`
-- Request : None
-- Response : JSON ()
+- Request : 
+  - None
+- Response : 
+  - JSON ()
 - Description:
   - API for removing a facility from its group by facility_id.
 
 ### Delete Group
 - Endpoint:
   - `DELETE http://localhost:5000/admin/delete_group/{group_id}`
-- Request : None
-- Response : JSON ()
+- Request : 
+  - None
+- Response : 
+  - JSON ()
 - Description:
   - API for deleting a group of facilities by group_id.
 
@@ -92,7 +101,8 @@
         "end_date": TIMESTAMP,
         "facility_id": Int
     }
-- Response : JSON ()
+- Response : 
+  - JSON ()
 - Description:
   - API for setting a holiday period for a facility.
 
@@ -105,15 +115,18 @@
         "start_date": TIMESTAMP,
         "end_date": TIMESTAMP
     }
-- Response : JSON ()
+- Response : 
+  - JSON ()
 - Description:
   - API for setting a holiday period for facilities belonging to the same group by group_id.
 
 ### Delete Holiday
 - Endpoint:
   - `DELETE http://localhost:5000/admin/remove_holiday/{status_id}`
-- Request : None
-- Response : JSON ()
+- Request : 
+  - None
+- Response : 
+  - JSON ()
 - Description:
   - API for deleting a holiday from the facility_status relation by status_id.
 
