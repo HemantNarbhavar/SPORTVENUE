@@ -63,7 +63,9 @@ library
                       Types,
                       Api,
                       Querys,
-                      DBconnection
+                      DBconnection,
+                      Auth.Api,
+                      Auth.Query
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -82,7 +84,9 @@ library
                       random,
                       string-random,
                       scientific,
-                      bytestring
+                      bytestring,
+                      password,
+                      bcrypt
 
 
     -- Directories containing source files.

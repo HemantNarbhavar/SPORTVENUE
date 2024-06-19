@@ -25,7 +25,8 @@ import Data.String (fromString)
 -- Inserts the provided facility data into the 'facility' Relation.
 add_facility :: Connection -> T.Facility -> Servant.Handler Tx.Text
 add_facility conn facility = do
-    let T.Facility { facility_name = fname
+    let T.Facility { 
+                  facility_name = fname
                 , facility_sport = fsport
                 , price_per_slot = fprice
                 , slot_duration = fslot
@@ -43,7 +44,8 @@ add_facility conn facility = do
 -- Update the facility data by facility_id and provided facility data to 'facility' Relation.
 update_facility :: Connection -> Int -> T.Facility -> Servant.Handler Tx.Text
 update_facility conn facilityId facility = do
-    let T.Facility { facility_name = fname
+    let T.Facility {    
+                   facility_name = fname
                  , facility_sport = fsport
                  , price_per_slot = fprice
                  , open_time = fopen_time
@@ -170,7 +172,8 @@ delete_holiday conn statusId = do
 -- Update Facilities by group_id (Updating facilities of same group of Facility Relation) 
 update_grouped_facilities :: Connection -> Int -> T.Facility -> Servant.Handler Tx.Text
 update_grouped_facilities conn groupId facility = do
-    let T.Facility { facility_name = fname
+    let T.Facility { 
+                   facility_name = fname
                  , facility_sport = fsport
                  , price_per_slot = fprice
                  , open_time = fopen_time

@@ -231,3 +231,11 @@ data Subscriptions = Subscriptions {
     user_id             ::    Maybe Int,
     facility_id         ::    Maybe Int
 } deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
+
+-- Custome Data type for Login
+data Login = Login {
+  email       ::    String,
+  password    ::    String
+} deriving (Show, Generic, FromJSON, ToJSON, FromRow, ToRow)
+
