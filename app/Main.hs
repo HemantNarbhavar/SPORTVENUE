@@ -11,7 +11,7 @@ import qualified DBconnection as DB
 
 main :: IO ()
 main = do
-  putStrLn "Hello, Haskell!"
+  putStrLn "SPORTVENUE (Sport Facility Management System) !"
   connStr <- DB.configDB
   conn <- connectPostgreSQL connStr
   putStrLn "Running at http://localhost:5000"
