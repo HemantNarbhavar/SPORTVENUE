@@ -102,6 +102,39 @@ testCaseAdminAPI = do
 
 
 
+testCaseUserAPI :: IO ()
+testCaseUserAPI = do
+    putStrLn "\nTestCase for User API's"
+
+    putStrLn "\ntest cases 1) Testing book_facility"
+    book_facilities_test
+
+    -- putStrLn "\ntest cases 2) Testing cancle_booking"
+    -- cancle_booking_test 4
+
+    putStrLn "\ntest cases 3) Testing get_bookings"
+    get_bookings_test
+
+    putStrLn "\ntest cases 4) Testing get_booking"
+    get_booking_test 2
+
+    putStrLn "\ntest cases 5) Testing get_booking_status_test"
+    get_booking_status_test 2
+
+    -- putStrLn "\ntest cases 6) Testing activate_booking"
+    -- activate_booking_test "datasample/bookingInfo/bookingtoken.json"
+
+
+    where
+        book_facilities_test :: IO ()
+        book_facilities_test = do
+            book_facility_test 3 20 "datasample/bookingInfo/booking1.json"
+            book_facility_test 2 10 "datasample/bookingInfo/booking2.json"
+            book_facility_test 4 30 "datasample/bookingInfo/booking3.json"
+            book_facility_test 6 51 "datasample/bookingInfo/booking4.json"
+            book_facility_test 8 70 "datasample/bookingInfo/booking5.json"
+
+
 
 
 testCaseCommonAPI :: IO ()
@@ -125,22 +158,8 @@ testCaseCommonAPI = do
 main :: IO ()
 main = do
     putStrLn  "Test Cases are running"
-    -- testcaseAuthTest
-    -- testCaseCommonAPI
+    testCaseAuthTest
+    testCaseCommonAPI
     testCaseAdminAPI
+    testCaseUserAPI          --not implemented yet
 
-
-    -- login_user_test "datasample/userInfo/userlogin.json"
-    -- login_admin_test "datasample/adminInfo/adminlogin.json"
-    -- register_user_test "datasample/user1.json"
-    -- register_admin_test "datasample/admin1.json"
-    -- get_facility_test 10
-    -- add_facility_test "facility.json"
-    -- update_facility_test 12 "facility.json"
-    -- delete_facility_test 14
-    -- get_facilities_test
-    -- get_ratings_test 7
-    -- get_top_facility_test
-    -- get_bookings_test
-    -- get_booking_status_test 1
-    -- search_available_slots_test 9
