@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # Run database schema initialization using psql new terminal
-gnome-terminal -- bash -c "psql -U adming10x -d postgres -a -f database/schema.sql"
+gnome-terminal -- bash -c "psql -U adming10x -d postgres -a -f database/schema.sql; exec bash"
+
+# update packages
+cabal update
 
 # Build the project
 cabal build
