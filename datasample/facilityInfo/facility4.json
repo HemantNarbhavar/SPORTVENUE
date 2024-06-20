@@ -1,0 +1,11 @@
+{
+    "facility_name": "North Ground",
+    "facility_sport": "cricket",
+    "price_per_slot": 400,
+    "slot_duration": 1,
+    "open_time": "06:00:00",
+    "close_time": "18:00:00",
+    "facility_address": "303 Pine Rd, Anytown",
+    "city": "Cityville",
+    "admin_id": 3
+}

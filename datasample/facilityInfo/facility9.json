@@ -1,0 +1,11 @@
+{
+    "facility_name": "Harbor Ground",
+    "facility_sport": "baseball",
+    "price_per_slot": 450,
+    "slot_duration": 1,
+    "open_time": "09:30:00",
+    "close_time": "21:30:00",
+    "facility_address": "909 Pine St, Anytown",
+    "city": "Cityville",
+    "admin_id": 4
+}

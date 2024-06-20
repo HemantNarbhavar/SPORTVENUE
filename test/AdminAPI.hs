@@ -89,7 +89,7 @@ delete_facility_test facilityId = do
 -- Function to test the create group API
 create_group_test :: FilePath -> IO ()
 create_group_test filePath = do
-    result <- eitherDecodeFileStrict filePath :: IO (Either String T.Facility)
+    result <- eitherDecodeFileStrict filePath :: IO (Either String T.Groups)
     case result of
         Left err -> putStrLn $ "Error reading JSON file: " ++ err
         Right group -> do
@@ -253,80 +253,31 @@ delete_holiday_test statusId = do
                 Right res -> print res
 
 -- Function to test the update grouped facilities API
-update_grouped_facilities_test :: Int -> T.Facility -> IO ()
-update_grouped_facilities_test groupId facility = do
-    let request = setRequestPath (pack $ "/admin/group/" ++ show groupId)
-                $ setRequestHost "localhost"
-                $ setRequestPort 5000
-                $ setRequestSecure False
-                $ setRequestMethod "PUT"
-                $ setRequestBodyJSON facility
-                $ defaultRequest
-    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-    case result of
-        Left e -> handleHttpException e
-        Right response -> do
-            let statusCode = getResponseStatusCode response
-            putStrLn $ "URL: " ++ "http://localhost:5000/admin/group/" ++ show groupId
-            putStrLn $ "Status code: " ++ show statusCode
-            let responseBody = getResponseBody response
-            case eitherDecode responseBody :: Either String T.Result of
-                Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                Right res -> print res
-
-
--- Function to test the activate booking API
-activate_booking_test :: FilePath -> IO ()
-activate_booking_test filePath = do
-    result <- eitherDecodeFileStrict filePath :: IO (Either String T.BookingToken)
+update_grouped_facilities_test :: Int -> FilePath -> IO ()
+update_grouped_facilities_test groupId filePath = do
+    result <- eitherDecodeFileStrict filePath :: IO (Either String T.Facility)
     case result of
         Left err -> putStrLn $ "Error reading JSON file: " ++ err
-        Right token -> do
-                let request = setRequestPath "/user/booking/activate"
+        Right facility -> do
+                let request = setRequestPath (pack $ "/admin/group/" ++ show groupId)
                             $ setRequestHost "localhost"
                             $ setRequestPort 5000
                             $ setRequestSecure False
                             $ setRequestMethod "PUT"
-                            $ setRequestBodyJSON token
+                            $ setRequestBodyJSON facility
                             $ defaultRequest
                 result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
                 case result1 of
                     Left e -> handleHttpException e
                     Right response -> do
                         let statusCode = getResponseStatusCode response
-                        putStrLn $ "URL: " ++ "http://localhost:5000/user/booking/activate"
+                        putStrLn $ "URL: " ++ "http://localhost:5000/admin/group/" ++ show groupId
                         putStrLn $ "Status code: " ++ show statusCode
                         let responseBody = getResponseBody response
                         case eitherDecode responseBody :: Either String T.Result of
                             Left err -> putStrLn $ "Error decoding JSON: " ++ err
                             Right res -> print res
 
-
--- Function to test the add rating API
-add_rating_test :: Int -> FilePath -> IO ()
-add_rating_test facilityId filePath = do
-    result <- eitherDecodeFileStrict filePath :: IO (Either String T.Ratings)
-    case result of
-        Left err -> putStrLn $ "Error reading JSON file: " ++ err
-        Right rating -> do
-                let request = setRequestPath (pack $ "/user/add_facility_rating/" ++ show facilityId)
-                            $ setRequestHost "localhost"
-                            $ setRequestPort 5000
-                            $ setRequestSecure False
-                            $ setRequestMethod "POST"
-                            $ setRequestBodyJSON rating
-                            $ defaultRequest
-                result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                case result1 of
-                    Left e -> handleHttpException e
-                    Right response -> do
-                        let statusCode = getResponseStatusCode response
-                        putStrLn $ "URL: " ++ "http://localhost:5000/user/add_facility_rating/" ++ show facilityId
-                        putStrLn $ "Status code: " ++ show statusCode
-                        let responseBody = getResponseBody response
-                        case eitherDecode responseBody :: Either String T.Result of
-                            Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                            Right res -> print res
 
 
 handleHttpException :: SomeException -> IO ()

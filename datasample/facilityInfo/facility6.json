@@ -1,0 +1,11 @@
+{
+    "facility_name": "Downtown Ground",
+    "facility_sport": "soccer",
+    "price_per_slot": 320,
+    "slot_duration": 2,
+    "open_time": "07:30:00",
+    "close_time": "19:30:00",
+    "facility_address": "606 Maple Rd, Anytown",
+    "city": "Cityville",
+    "admin_id": 1
+}

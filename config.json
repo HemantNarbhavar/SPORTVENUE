@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "dbname": "sport",
+    "dbname": "sportvenue",
     "user": "adming10x",
     "password": "1234"
 }

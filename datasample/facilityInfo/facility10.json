@@ -1,0 +1,11 @@
+{
+    "facility_name": "Metro Turf",
+    "facility_sport": "lacrosse",
+    "price_per_slot": 360,
+    "slot_duration": 2,
+    "open_time": "07:00:00",
+    "close_time": "19:00:00",
+    "facility_address": "1010 Oak Rd, Anytown",
+    "city": "Cityville",
+    "admin_id": 5
+}

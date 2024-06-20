@@ -13,7 +13,6 @@ import qualified Data.Text as Tx
 import Data.Time.Format
 
 
-
 -- Function to test the book facility API
 book_facility_test :: Int -> Int -> FilePath -> IO ()
 book_facility_test facilityId slotId filePath = do
@@ -203,8 +202,8 @@ search_available_slots_test facilityId = do
 
 
 -- Function to test the search available slots by day API
-searchAvailableSlotsDayTest :: Day -> Int -> IO ()
-searchAvailableSlotsDayTest day facilityId = do
+search_available_slots_day_test :: Day -> Int -> IO ()
+search_available_slots_day_test day facilityId = do
     let formattedDay = formatDay day
     let request = setRequestPath (pack $ "/user/search_available_slots/" ++ Tx.unpack formattedDay ++ "/" ++ show facilityId)
                 $ setRequestHost "localhost"

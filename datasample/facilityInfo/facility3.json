@@ -1,0 +1,11 @@
+{
+    "facility_name": "Eastside Turf",
+    "facility_sport": "rugby",
+    "price_per_slot": 350,
+    "slot_duration": 2,
+    "open_time": "09:00:00",
+    "close_time": "21:00:00",
+    "facility_address": "404 Cedar Ave, Anytown",
+    "city": "Cityville",
+    "admin_id": 4
+}

@@ -1,0 +1,11 @@
+{
+    "facility_name": "City Park Court",
+    "facility_sport": "volleyball",
+    "price_per_slot": 220,
+    "slot_duration": 2,
+    "open_time": "06:30:00",
+    "close_time": "18:30:00",
+    "facility_address": "808 Ash Ave, Anytown",
+    "city": "Cityville",
+    "admin_id": 3
+}

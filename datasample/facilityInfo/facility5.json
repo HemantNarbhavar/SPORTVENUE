@@ -1,0 +1,11 @@
+{
+    "facility_name": "South Court",
+    "facility_sport": "basketball",
+    "price_per_slot": 250,
+    "slot_duration": 1,
+    "open_time": "10:00:00",
+    "close_time": "22:00:00",
+    "facility_address": "505 Birch St, Anytown",
+    "city": "Cityville",
+    "admin_id": 5
+}

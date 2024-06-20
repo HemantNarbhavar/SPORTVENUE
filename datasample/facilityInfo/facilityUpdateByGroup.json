@@ -1,0 +1,10 @@
+{
+    "facility_name": "Central Turf",
+    "facility_sport": "football",
+    "price_per_slot": 1000,
+    "slot_duration": 1,
+    "open_time": "08:00:00",
+    "close_time": "20:00:00",
+    "facility_address": "101 Main St, Anytown",
+    "city": "Cityville"
+}

@@ -1,0 +1,11 @@
+{
+    "facility_name": "Westside Court",
+    "facility_sport": "tennis",
+    "price_per_slot": 200,
+    "slot_duration": 2,
+    "open_time": "07:00:00",
+    "close_time": "19:00:00",
+    "facility_address": "202 Oak St, Anytown",
+    "city": "Cityville",
+    "admin_id": 2
+}
