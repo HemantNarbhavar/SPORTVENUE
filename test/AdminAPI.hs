@@ -4,8 +4,7 @@ module AdminAPI where
 
 import qualified Types as T
 import Network.HTTP.Simple
-import Data.Aeson (eitherDecode, decode, eitherDecodeFileStrict)
-import Control.Monad (void)
+import Data.Aeson (eitherDecode, eitherDecodeFileStrict)
 import Data.ByteString.Char8 (pack)
 import Control.Exception 
 import qualified Data.ByteString.Lazy as BL
@@ -25,8 +24,8 @@ add_facility_test filePath = do
                                 $ setRequestMethod "POST"
                                 $ setRequestBodyJSON facility
                                 $ defaultRequest
-                    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                    case result of
+                    result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                    case result1 of
                         Left e -> handleHttpException e
                         Right response -> do
                             let statusCode = getResponseStatusCode response
@@ -35,7 +34,7 @@ add_facility_test filePath = do
                             let responseBody = getResponseBody response
                             case eitherDecode responseBody :: Either String T.Result of
                                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                                Right result -> print result
+                                Right res -> print res
 
 
 -- Function to test the update facility API
@@ -52,8 +51,8 @@ update_facility_test facilityId filePath = do
                                 $ setRequestMethod "PUT"
                                 $ setRequestBodyJSON facility
                                 $ defaultRequest
-                    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                    case result of
+                    result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                    case result1 of
                         Left e -> handleHttpException e
                         Right response -> do
                             let statusCode = getResponseStatusCode response
@@ -62,7 +61,7 @@ update_facility_test facilityId filePath = do
                             let responseBody = getResponseBody response
                             case eitherDecode responseBody :: Either String T.Result of
                                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                                Right result -> print result
+                                Right res -> print res
 
 
 -- Function to test the delete facility API
@@ -84,7 +83,7 @@ delete_facility_test facilityId = do
                         let responseBody = getResponseBody response
                         case eitherDecode responseBody :: Either String T.Result of
                             Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                            Right result -> print result
+                            Right res -> print res
 
 
 -- Function to test the create group API
@@ -101,8 +100,8 @@ create_group_test filePath = do
                                 $ setRequestMethod "POST"
                                 $ setRequestBodyJSON group
                                 $ defaultRequest
-                    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                    case result of
+                    result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                    case result1 of
                         Left e -> handleHttpException e
                         Right response -> do
                             let statusCode = getResponseStatusCode response
@@ -111,7 +110,7 @@ create_group_test filePath = do
                             let responseBody = getResponseBody response
                             case eitherDecode responseBody :: Either String T.Result of
                                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                                Right result -> print result
+                                Right res -> print res
 
 
 -- Function to test the update facility group API
@@ -133,8 +132,7 @@ update_facility_group_test facilityId groupId = do
                         let responseBody = getResponseBody response
                         case eitherDecode responseBody :: Either String T.Result of
                             Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                            Right result -> print result
-
+                            Right res -> print res
 
 -- Function to test the remove facility group API
 remove_facility_group_test :: Int -> IO ()
@@ -155,7 +153,7 @@ remove_facility_group_test facilityId = do
                         let responseBody = getResponseBody response
                         case eitherDecode responseBody :: Either String T.Result of
                             Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                            Right result -> print result
+                            Right res -> print res
 
 
 -- Function to test the delete group API
@@ -177,7 +175,7 @@ delete_group_test groupId = do
             let responseBody = getResponseBody response
             case eitherDecode responseBody :: Either String T.Result of
                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                Right result -> print result
+                Right res -> print res
 
 
 -- Function to test the set Facility status API
@@ -194,8 +192,8 @@ set_holiday_test filePath = do
                                 $ setRequestMethod "POST"
                                 $ setRequestBodyJSON facilitySt
                                 $ defaultRequest
-                    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                    case result of
+                    result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                    case result1 of
                         Left e -> handleHttpException e
                         Right response -> do
                             let statusCode = getResponseStatusCode response
@@ -204,7 +202,7 @@ set_holiday_test filePath = do
                             let responseBody = getResponseBody response
                             case eitherDecode responseBody :: Either String T.Result of
                                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                                Right result -> print result
+                                Right res -> print res
 
 
 -- Function to test the set Facility status by group API
@@ -221,8 +219,8 @@ set_holiday_group_test groupId filePath = do
                                 $ setRequestMethod "POST"
                                 $ setRequestBodyJSON facilitySt
                                 $ defaultRequest
-                    result <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
-                    case result of
+                    result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                    case result1 of
                         Left e -> handleHttpException e
                         Right response -> do
                             let statusCode = getResponseStatusCode response
@@ -231,7 +229,7 @@ set_holiday_group_test groupId filePath = do
                             let responseBody = getResponseBody response
                             case eitherDecode responseBody :: Either String T.Result of
                                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                                Right result -> print result
+                                Right res -> print res
 
 -- Function to test the delete facility status API
 delete_holiday_test :: Int -> IO ()
@@ -252,7 +250,7 @@ delete_holiday_test statusId = do
             let responseBody = getResponseBody response
             case eitherDecode responseBody :: Either String T.Result of
                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                Right result -> print result
+                Right res -> print res
 
 -- Function to test the update grouped facilities API
 update_grouped_facilities_test :: Int -> T.Facility -> IO ()
@@ -274,8 +272,61 @@ update_grouped_facilities_test groupId facility = do
             let responseBody = getResponseBody response
             case eitherDecode responseBody :: Either String T.Result of
                 Left err -> putStrLn $ "Error decoding JSON: " ++ err
-                Right result -> print result
+                Right res -> print res
 
+
+-- Function to test the activate booking API
+activate_booking_test :: FilePath -> IO ()
+activate_booking_test filePath = do
+    result <- eitherDecodeFileStrict filePath :: IO (Either String T.BookingToken)
+    case result of
+        Left err -> putStrLn $ "Error reading JSON file: " ++ err
+        Right token -> do
+                let request = setRequestPath "/user/booking/activate"
+                            $ setRequestHost "localhost"
+                            $ setRequestPort 5000
+                            $ setRequestSecure False
+                            $ setRequestMethod "PUT"
+                            $ setRequestBodyJSON token
+                            $ defaultRequest
+                result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                case result1 of
+                    Left e -> handleHttpException e
+                    Right response -> do
+                        let statusCode = getResponseStatusCode response
+                        putStrLn $ "URL: " ++ "http://localhost:5000/user/booking/activate"
+                        putStrLn $ "Status code: " ++ show statusCode
+                        let responseBody = getResponseBody response
+                        case eitherDecode responseBody :: Either String T.Result of
+                            Left err -> putStrLn $ "Error decoding JSON: " ++ err
+                            Right res -> print res
+
+
+-- Function to test the add rating API
+add_rating_test :: Int -> FilePath -> IO ()
+add_rating_test facilityId filePath = do
+    result <- eitherDecodeFileStrict filePath :: IO (Either String T.Ratings)
+    case result of
+        Left err -> putStrLn $ "Error reading JSON file: " ++ err
+        Right rating -> do
+                let request = setRequestPath (pack $ "/user/add_facility_rating/" ++ show facilityId)
+                            $ setRequestHost "localhost"
+                            $ setRequestPort 5000
+                            $ setRequestSecure False
+                            $ setRequestMethod "POST"
+                            $ setRequestBodyJSON rating
+                            $ defaultRequest
+                result1 <- try $ httpLBS request :: IO (Either SomeException (Response BL.ByteString))
+                case result1 of
+                    Left e -> handleHttpException e
+                    Right response -> do
+                        let statusCode = getResponseStatusCode response
+                        putStrLn $ "URL: " ++ "http://localhost:5000/user/add_facility_rating/" ++ show facilityId
+                        putStrLn $ "Status code: " ++ show statusCode
+                        let responseBody = getResponseBody response
+                        case eitherDecode responseBody :: Either String T.Result of
+                            Left err -> putStrLn $ "Error decoding JSON: " ++ err
+                            Right res -> print res
 
 
 handleHttpException :: SomeException -> IO ()

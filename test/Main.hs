@@ -3,6 +3,7 @@ module Main where
 import CommonAPI
 import AuthTest
 import AdminAPI
+import UserAPI
 
 main :: IO ()
 main = do
@@ -18,4 +19,7 @@ main = do
     -- delete_facility_test 14
     -- get_facilities_test
     -- get_ratings_test 7
-    get_top_facility_test
+    -- get_top_facility_test
+    -- get_bookings_test
+    -- get_booking_status_test 1
+    search_available_slots_test 9
