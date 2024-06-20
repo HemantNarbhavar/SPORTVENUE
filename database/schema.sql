@@ -1,3 +1,9 @@
+-- creating sportvenue database
+CREATE DATABASE sportvenue;
+
+-- connect to sportvenue database
+\c sportvenue
+
 -- Booking Status type for booking relation
 CREATE TYPE booking_st AS ENUM ('booked', 'canclled', 'activate');
 
